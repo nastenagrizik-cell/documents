@@ -34,6 +34,7 @@
       --color-primary-soft: rgba(175, 75, 113, 0.1);
       --color-success: #2f8757;
       --color-success-soft: rgba(47, 135, 87, 0.12);
+      --color-success-soft-strong: rgba(202, 239, 216, 0.88);
       --color-success-border: rgba(47, 135, 87, 0.26);
       --color-accent: #536fa9;
       --color-accent-soft: rgba(83, 111, 169, 0.1);
@@ -81,7 +82,7 @@
       border-color: var(--color-primary);
       box-shadow: 0 0 0 4px color-mix(in srgb, var(--color-primary) 14%, transparent);
     }
-    textarea { min-height: 90px; resize: vertical; }
+    textarea { min-height: 72px; resize: vertical; }
 
     .shell {
       width: min(1200px, calc(100% - 22px));
@@ -188,8 +189,9 @@
       box-shadow: var(--shadow-sm);
     }
     .doc-row.is-approved {
-      background: color-mix(in srgb, var(--color-surface-offset) 58%, white);
-      opacity: 0.98;
+      background: linear-gradient(180deg, color-mix(in srgb, var(--color-success-soft-strong) 78%, white), color-mix(in srgb, var(--color-success-soft) 68%, white));
+      border-color: color-mix(in srgb, var(--color-success) 18%, var(--color-border));
+      opacity: 1;
     }
     .doc-main { min-width: 0; }
     .doc-title-line {
@@ -287,6 +289,20 @@
       background: var(--color-primary-soft);
       border-color: color-mix(in srgb, var(--color-primary) 34%, var(--color-border));
       color: var(--color-primary);
+    }
+
+    .deadline-chip {
+      min-height: 28px;
+      padding: 0 11px;
+      border-radius: 999px;
+      border: 1px solid color-mix(in srgb, var(--color-accent) 20%, var(--color-border));
+      background: color-mix(in srgb, var(--color-accent) 8%, white);
+      color: var(--color-accent);
+      font-size: 0.75rem;
+      font-weight: 700;
+      display: inline-flex;
+      align-items: center;
+      white-space: nowrap;
     }
 
     .extra-tags {
@@ -389,14 +405,14 @@
     }
     .modal.open { display: flex; }
     .modal-card {
-      width: min(760px, 100%);
-      max-height: min(90dvh, 920px);
+      width: min(900px, 100%);
+      max-height: min(94dvh, 980px);
       overflow: auto;
       background: color-mix(in srgb, var(--color-surface) 97%, transparent);
       border: 1px solid var(--color-border);
       border-radius: 28px;
       box-shadow: var(--shadow-md);
-      padding: 22px;
+      padding: 18px 18px 16px;
     }
     .modal-head {
       display: flex;
@@ -421,9 +437,10 @@
       color: var(--color-text-muted);
       flex-shrink: 0;
     }
-    .form-grid { display: grid; gap: 12px; }
-    .grid-2 { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; }
-    .field { display: grid; gap: 6px; }
+    .form-grid { display: grid; gap: 10px; }
+    .grid-2 { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; }
+    .grid-3 { display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 10px; }
+    .field { display: grid; gap: 5px; }
     .field label { font-size: var(--text-sm); font-weight: 700; }
     .field small { color: var(--color-text-faint); font-size: var(--text-xs); }
     .modal-actions {
@@ -454,7 +471,7 @@
     }
     @media (max-width: 760px) {
       .shell { width: min(100% - 10px, 100%); margin: 5px; padding: 14px; border-radius: 22px; }
-      .grid-2 { grid-template-columns: 1fr; }
+      .grid-2, .grid-3 { grid-template-columns: 1fr; }
       .steps { flex-wrap: wrap; }
       .step { flex: 1 1 calc(50% - 6px); min-width: 144px; }
       .modal-card { padding: 16px; border-radius: 22px; }
@@ -648,6 +665,7 @@
     const projectName = document.getElementById('projectName');
     const counterparty = document.getElementById('counterparty');
     const commentInput = document.getElementById('commentInput');
+    const approvalDeadline = document.getElementById('approvalDeadline');
     const supplierSuggestions = document.getElementById('counterpartySuggestions');
     const modalTitle = document.getElementById('modalTitle');
     const saveBtn = document.getElementById('saveBtn');
@@ -885,6 +903,7 @@
         status: 'on_me',
         mktDone: false,
         comment: doc.comment || '',
+        approvalDeadline: doc.approvalDeadline || new Date(addDays(new Date(), 10)).toISOString(),
         sortIndex: state.docs.length ? Math.max(...state.docs.map(item => item.sortIndex ?? 0)) + 1 : 0
       };
       state.docs = [...state.docs, duplicate];
@@ -900,6 +919,9 @@
       docModal.classList.add('open');
       docModal.setAttribute('aria-hidden', 'false');
       monthInput.value = monthInput.value || state.activeMonth;
+      if (!editing && !approvalDeadline.value) {
+        approvalDeadline.value = toInputDate(addDays(new Date(), 10));
+      }
       modalTitle.textContent = editing ? 'Редактирование документа' : 'Новый документ';
       saveBtn.textContent = editing ? 'Сохранить изменения' : 'Сохранить';
       setTimeout(() => appendixNumber.focus(), 40);
@@ -915,6 +937,7 @@
       docForm.reset();
       docId.value = '';
       monthInput.value = state.activeMonth;
+      approvalDeadline.value = toInputDate(addDays(new Date(), 10));
       modalTitle.textContent = 'Новый документ';
       saveBtn.textContent = 'Сохранить';
     }
@@ -930,6 +953,7 @@
       projectName.value = doc.projectName;
       counterparty.value = doc.counterparty;
       commentInput.value = doc.comment || '';
+      approvalDeadline.value = doc.approvalDeadline ? toInputDate(doc.approvalDeadline) : toInputDate(addDays(new Date(), 10));
       openModal(true);
     }
 
@@ -953,6 +977,26 @@
       const [year, currentMonth] = month.split('-').map(Number);
       const date = new Date(year, currentMonth - 1 + diff, 1);
       return `${date.getFullYear()}-${String(date.getMonth() + 1).padStart(2, '0')}`;
+    }
+
+
+    function addDays(date, days) {
+      const copy = new Date(date);
+      copy.setDate(copy.getDate() + days);
+      return copy;
+    }
+
+    function toInputDate(value) {
+      const date = new Date(value);
+      if (Number.isNaN(date.getTime())) return '';
+      return `${date.getFullYear()}-${String(date.getMonth() + 1).padStart(2, '0')}-${String(date.getDate()).padStart(2, '0')}`;
+    }
+
+    function formatDeadline(value) {
+      if (!value) return '';
+      const date = new Date(value);
+      if (Number.isNaN(date.getTime())) return '';
+      return `${String(date.getDate()).padStart(2, '0')}.${String(date.getMonth() + 1).padStart(2, '0')}`;
     }
 
     function isDecisionInProgress(value) {
