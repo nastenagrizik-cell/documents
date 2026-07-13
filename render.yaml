@@ -1,0 +1,16 @@
+services:
+  - type: web
+    name: document-tracker-app
+    env: node
+    plan: starter
+    buildCommand: npm install
+    startCommand: npm start
+    envVars:
+      - key: DATABASE_URL
+        fromDatabase:
+          name: document-tracker-db
+          property: connectionString
+
+databases:
+  - name: document-tracker-db
+    plan: basic-256mb
