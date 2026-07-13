@@ -32,10 +32,13 @@ async function initDb() {
       stage INTEGER NOT NULL DEFAULT 0,
       in_mkt BOOLEAN NOT NULL DEFAULT FALSE,
       comment TEXT,
+      approval_deadline TIMESTAMPTZ,
       created_at TIMESTAMPTZ NOT NULL DEFAULT NOW(),
       updated_at TIMESTAMPTZ NOT NULL DEFAULT NOW()
     );
   `);
+
+  await pool.query(`ALTER TABLE documents ADD COLUMN IF NOT EXISTS approval_deadline TIMESTAMPTZ`);
 
   await pool.query(`
     CREATE TABLE IF NOT EXISTS suppliers (
