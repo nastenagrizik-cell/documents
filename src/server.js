@@ -41,12 +41,12 @@ async function initDb() {
 
   await pool.query(`
     ALTER TABLE documents
-      ADD COLUMN IF NOT EXISTS approval_deadline TIMESTAMPTZ;
+    ADD COLUMN IF NOT EXISTS approval_deadline TIMESTAMPTZ
   `);
 
   await pool.query(`
     ALTER TABLE documents
-      ADD COLUMN IF NOT EXISTS approval_date TIMESTAMPTZ;
+    ADD COLUMN IF NOT EXISTS approval_date TIMESTAMPTZ
   `);
 
   await pool.query(`
@@ -78,20 +78,35 @@ function normalizeDoc(row) {
 }
 
 app.get('/api/health', async (_req, res) => {
-  await pool.query('SELECT 1');
-  res.json({ ok: true });
+  try {
+    await pool.query('SELECT 1');
+    res.json({ ok: true });
+  } catch (error) {
+    console.error('Health check error:', error);
+    res.status(500).json({ ok: false });
+  }
 });
 
 app.get('/api/documents', async (_req, res) => {
-  const result = await pool.query(
-    'SELECT * FROM documents ORDER BY month DESC, stage ASC, updated_at DESC'
-  );
-  res.json(result.rows.map(normalizeDoc));
+  try {
+    const result = await pool.query(
+      'SELECT * FROM documents ORDER BY month DESC, stage ASC, updated_at DESC'
+    );
+    res.json(result.rows.map(normalizeDoc));
+  } catch (error) {
+    console.error('Fetch documents error:', error);
+    res.status(500).json({ error: 'Failed to fetch documents' });
+  }
 });
 
 app.get('/api/suppliers', async (_req, res) => {
-  const result = await pool.query('SELECT name FROM suppliers ORDER BY name ASC');
-  res.json(result.rows.map((row) => row.name));
+  try {
+    const result = await pool.query('SELECT name FROM suppliers ORDER BY name ASC');
+    res.json(result.rows.map((row) => row.name));
+  } catch (error) {
+    console.error('Fetch suppliers error:', error);
+    res.status(500).json({ error: 'Failed to fetch suppliers' });
+  }
 });
 
 app.post('/api/documents', async (req, res) => {
@@ -102,26 +117,37 @@ app.post('/api/documents', async (req, res) => {
       return res.status(400).json({ error: 'Missing required fields' });
     }
 
-    // если документ перевели в стадию "согласовано" (например stage === 2),
-    // фиксируем дату согласования, если её ещё нет
-    let approvalDate = doc.approvalDate || null;
-    const stageNumber = Number(doc.stage || 0);
+    const stage = Number(doc.stage || 0);
 
-    if (stageNumber === 2 && !approvalDate) {
+    let approvalDate = doc.approvalDate || null;
+
+    if (stage === 2 && !approvalDate) {
       approvalDate = new Date().toISOString();
+    }
+
+    if (stage < 2) {
+      approvalDate = null;
     }
 
     await pool.query(
       `
       INSERT INTO documents (
-        id, month, appendix_number, project_name, counterparty,
-        internal_number, tender_number, stage, in_mkt, comment,
-        approval_deadline, approval_date, updated_at
+        id,
+        month,
+        appendix_number,
+        project_name,
+        counterparty,
+        internal_number,
+        tender_number,
+        stage,
+        in_mkt,
+        comment,
+        approval_deadline,
+        approval_date,
+        updated_at
       )
       VALUES (
-        $1,$2,$3,$4,$5,
-        $6,$7,$8,$9,$10,
-        $11,$12,NOW()
+        $1,$2,$3,$4,$5,$6,$7,$8,$9,$10,$11,$12,NOW()
       )
       ON CONFLICT (id) DO UPDATE SET
         month = EXCLUDED.month,
@@ -134,9 +160,9 @@ app.post('/api/documents', async (req, res) => {
         in_mkt = EXCLUDED.in_mkt,
         comment = EXCLUDED.comment,
         approval_deadline = EXCLUDED.approval_deadline,
-        approval_date = COALESCE(documents.approval_date, EXCLUDED.approval_date),
+        approval_date = EXCLUDED.approval_date,
         updated_at = NOW()
-    `,
+      `,
       [
         doc.id,
         doc.month,
@@ -145,7 +171,7 @@ app.post('/api/documents', async (req, res) => {
         doc.counterparty,
         doc.internalNumber || '',
         doc.tenderNumber || '',
-        stageNumber,
+        stage,
         Boolean(doc.inMkt),
         doc.comment || '',
         doc.approvalDeadline || null,
@@ -163,14 +189,19 @@ app.post('/api/documents', async (req, res) => {
     const saved = await pool.query('SELECT * FROM documents WHERE id = $1', [doc.id]);
     res.json(normalizeDoc(saved.rows[0]));
   } catch (error) {
-    console.error('Error saving document', error);
+    console.error('Save document error:', error);
     res.status(500).json({ error: 'Failed to save document' });
   }
 });
 
 app.delete('/api/documents/:id', async (req, res) => {
-  await pool.query('DELETE FROM documents WHERE id = $1', [req.params.id]);
-  res.json({ ok: true });
+  try {
+    await pool.query('DELETE FROM documents WHERE id = $1', [req.params.id]);
+    res.json({ ok: true });
+  } catch (error) {
+    console.error('Delete document error:', error);
+    res.status(500).json({ error: 'Failed to delete document' });
+  }
 });
 
 app.get('*', (_req, res) => {
