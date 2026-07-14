@@ -7,46 +7,43 @@
   <link href="https://api.fontshare.com/v2/css?f[]=satoshi@400,500,700&f[]=general-sans@500,600,700&display=swap" rel="stylesheet">
   <style>
     :root {
-      --text-xs: clamp(0.75rem, 0.72rem + 0.2vw, 0.84rem);
-      --text-sm: clamp(0.875rem, 0.84rem + 0.25vw, 0.96rem);
-      --text-base: clamp(1rem, 0.96rem + 0.2vw, 1.04rem);
-      --text-lg: clamp(1.12rem, 1.04rem + 0.45vw, 1.28rem);
-      --text-xl: clamp(1.4rem, 1.15rem + 0.8vw, 1.72rem);
+      --text-xs: 12px;
+      --text-sm: 14px;
+      --text-base: 16px;
+      --text-lg: 18px;
+      --text-xl: 28px;
 
-      --space-1: 0.25rem;
-      --space-2: 0.5rem;
-      --space-3: 0.75rem;
-      --space-4: 1rem;
-      --space-5: 1.25rem;
-      --space-6: 1.5rem;
+      --space-1: 4px;
+      --space-2: 8px;
+      --space-3: 12px;
+      --space-4: 16px;
+      --space-5: 20px;
+      --space-6: 24px;
 
-      --color-bg: #f5f3f4;
-      --color-surface: #fffdfd;
+      --color-bg: #f5f2f3;
+      --color-surface: #fcfafb;
       --color-surface-2: #ffffff;
-      --color-surface-offset: #f1ecef;
-      --color-border: rgba(49, 33, 41, 0.09);
-      --color-divider: rgba(49, 33, 41, 0.06);
-      --color-text: #2e2027;
-      --color-text-muted: #6e5a63;
-      --color-text-faint: #9c8a92;
-      --color-primary: #af4b71;
-      --color-primary-hover: #97385d;
-      --color-primary-soft: rgba(175, 75, 113, 0.1);
-      --color-success: #2f8757;
-      --color-success-soft: rgba(47, 135, 87, 0.12);
-      --color-success-soft-strong: rgba(202, 239, 216, 0.88);
-      --color-success-border: rgba(47, 135, 87, 0.26);
-      --color-accent: #536fa9;
-      --color-accent-soft: rgba(83, 111, 169, 0.1);
-      --color-alert: #c65a65;
-      --color-alert-soft: rgba(198, 90, 101, 0.1);
-      --color-money: #9a7b27;
-      --color-money-soft: rgba(154, 123, 39, 0.11);
-      --shadow-sm: 0 8px 20px rgba(92, 63, 74, 0.05);
-      --shadow-md: 0 20px 44px rgba(92, 63, 74, 0.08);
-      --radius-sm: 0.75rem;
-      --radius-md: 1rem;
-      --radius-lg: 1.25rem;
+      --color-border: rgba(54, 35, 44, 0.09);
+      --color-divider: rgba(54, 35, 44, 0.06);
+      --color-text: #2f2228;
+      --color-text-muted: #74616a;
+      --color-text-faint: #a08f96;
+      --color-primary: #ab4f73;
+      --color-primary-soft: rgba(171, 79, 115, 0.1);
+      --color-success: #338659;
+      --color-success-soft: rgba(51, 134, 89, 0.12);
+      --color-success-border: rgba(51, 134, 89, 0.22);
+      --color-gold: #8c6c16;
+      --color-gold-soft: #efe4c3;
+      --color-gold-soft-2: #f6f0de;
+      --color-gold-dark: #8b6710;
+      --color-alert: #b15a66;
+      --color-alert-soft: rgba(177, 90, 102, 0.1);
+      --shadow-sm: 0 8px 20px rgba(92, 63, 74, 0.04);
+      --shadow-md: 0 18px 36px rgba(92, 63, 74, 0.08);
+      --radius-sm: 12px;
+      --radius-md: 18px;
+      --radius-lg: 24px;
       --radius-full: 999px;
       --transition: 180ms cubic-bezier(0.16, 1, 0.3, 1);
       --font-body: 'Satoshi', system-ui, sans-serif;
@@ -54,51 +51,49 @@
     }
 
     * { box-sizing: border-box; margin: 0; padding: 0; }
-    html { -webkit-font-smoothing: antialiased; -moz-osx-font-smoothing: grayscale; }
     body {
       min-height: 100dvh;
       font-family: var(--font-body);
       font-size: var(--text-base);
-      line-height: 1.5;
+      line-height: 1.45;
       color: var(--color-text);
       background:
-        radial-gradient(circle at 0% 0%, rgba(83,111,169,0.07), transparent 26%),
-        radial-gradient(circle at 100% 0%, rgba(175,75,113,0.08), transparent 30%),
-        linear-gradient(180deg, var(--color-bg) 0%, #f2eff1 100%);
+        radial-gradient(circle at 0% 0%, rgba(171,79,115,0.06), transparent 26%),
+        linear-gradient(180deg, #f4f1f2 0%, #f1eeef 100%);
     }
     button, input, select, textarea { font: inherit; color: inherit; }
     button { border: 0; background: none; cursor: pointer; }
     input, select, textarea {
       width: 100%;
-      min-height: 42px;
-      border-radius: var(--radius-sm);
+      min-height: 44px;
+      border-radius: 14px;
       border: 1px solid var(--color-border);
       background: var(--color-surface-2);
-      padding: 0.74rem 0.9rem;
+      padding: 0.76rem 0.9rem;
       transition: border-color var(--transition), box-shadow var(--transition), background var(--transition);
     }
     input:focus, select:focus, textarea:focus {
       outline: none;
       border-color: var(--color-primary);
-      box-shadow: 0 0 0 4px color-mix(in srgb, var(--color-primary) 14%, transparent);
+      box-shadow: 0 0 0 4px rgba(171, 79, 115, 0.12);
     }
-    textarea { min-height: 72px; resize: vertical; }
+    textarea { min-height: 88px; resize: vertical; }
 
     .shell {
-      width: min(1200px, calc(100% - 22px));
-      margin: 18px auto;
+      width: min(1240px, calc(100% - 24px));
+      margin: 16px auto;
       padding: 18px;
-      background: color-mix(in srgb, var(--color-surface) 92%, transparent);
+      background: rgba(252, 250, 251, 0.88);
       border: 1px solid var(--color-border);
       border-radius: 30px;
       box-shadow: var(--shadow-md);
-      backdrop-filter: blur(12px);
+      backdrop-filter: blur(14px);
     }
     .topbar {
       display: flex;
-      align-items: center;
       justify-content: space-between;
-      gap: var(--space-4);
+      align-items: center;
+      gap: 16px;
       margin-bottom: 14px;
     }
     .brand {
@@ -108,10 +103,10 @@
       min-width: 0;
     }
     .logo {
-      width: 40px;
-      height: 40px;
-      border-radius: 14px;
-      background: linear-gradient(135deg, var(--color-primary-soft), var(--color-accent-soft));
+      width: 42px;
+      height: 42px;
+      border-radius: 15px;
+      background: linear-gradient(135deg, rgba(171,79,115,0.11), rgba(171,79,115,0.03));
       color: var(--color-primary);
       display: grid;
       place-items: center;
@@ -120,13 +115,17 @@
     .brand h1 {
       font-family: var(--font-display);
       font-size: var(--text-xl);
-      line-height: 1.04;
       font-weight: 700;
       letter-spacing: -0.02em;
     }
+    .topbar-actions {
+      display: flex;
+      gap: 8px;
+      align-items: center;
+    }
     .icon-btn {
-      min-width: 42px;
-      min-height: 42px;
+      width: 42px;
+      height: 42px;
       border-radius: 14px;
       background: var(--color-surface-2);
       border: 1px solid var(--color-border);
@@ -134,19 +133,16 @@
       display: inline-flex;
       align-items: center;
       justify-content: center;
-      font-size: 1.3rem;
-      font-weight: 600;
-      transition: transform var(--transition), filter var(--transition);
+      font-size: 1.2rem;
       box-shadow: var(--shadow-sm);
     }
-    .icon-btn:hover { transform: translateY(-1px); background: color-mix(in srgb, var(--color-primary) 8%, var(--color-surface-2)); }
 
     .toolbar {
       display: grid;
-      grid-template-columns: minmax(180px, 240px) 160px 1fr;
+      grid-template-columns: minmax(200px, 240px) 180px 1fr;
       gap: 10px;
+      margin-bottom: 14px;
       align-items: center;
-      margin-bottom: 12px;
     }
     .month-switcher, .compact-filter {
       background: var(--color-surface-2);
@@ -162,7 +158,6 @@
       place-items: center;
       color: var(--color-text-muted);
     }
-    .month-nav:hover { background: color-mix(in srgb, var(--color-accent) 8%, var(--color-surface-2)); color: var(--color-accent); }
     .month-current {
       flex: 1;
       padding: 0 10px;
@@ -176,23 +171,17 @@
     }
     .month-current input { font-weight: 700; }
 
-    .summary, .stats, .metrics { display: none !important; }
-    .list { display: grid; gap: 8px; }
+    .list { display: grid; gap: 10px; }
     .doc-row {
       display: grid;
-      grid-template-columns: minmax(0, 1.7fr) minmax(520px, 1.2fr) auto;
-      gap: 10px;
+      grid-template-columns: minmax(0, 1.5fr) minmax(510px, 1.1fr) auto auto;
+      gap: 12px;
       align-items: center;
-      padding: 9px 14px;
-      background: color-mix(in srgb, var(--color-surface-2) 89%, transparent);
+      padding: 12px 14px;
+      background: rgba(255,255,255,0.8);
       border: 1px solid var(--color-border);
       border-radius: 26px;
       box-shadow: var(--shadow-sm);
-    }
-    .doc-row.is-approved {
-      background: linear-gradient(180deg, color-mix(in srgb, var(--color-success-soft-strong) 78%, white), color-mix(in srgb, var(--color-success-soft) 68%, white));
-      border-color: color-mix(in srgb, var(--color-success) 18%, var(--color-border));
-      opacity: 1;
     }
     .doc-main { min-width: 0; }
     .doc-title-line {
@@ -200,112 +189,94 @@
       align-items: baseline;
       gap: 10px;
       flex-wrap: wrap;
-      margin-bottom: 2px;
+      margin-bottom: 4px;
     }
     .doc-number {
       font-family: var(--font-display);
-      font-size: 0.95rem;
       font-weight: 700;
-      letter-spacing: -0.01em;
       color: var(--color-primary);
+      font-size: 0.96rem;
       white-space: nowrap;
     }
     .doc-project {
-      font-size: 0.94rem;
       font-weight: 700;
-      color: var(--color-text);
+      font-size: 0.96rem;
       min-width: 0;
     }
     .doc-meta {
-      color: var(--color-text-muted);
-      font-size: 0.74rem;
       display: flex;
       flex-wrap: wrap;
-      gap: 4px 10px;
+      gap: 4px 12px;
+      color: var(--color-text-muted);
+      font-size: 0.76rem;
       align-items: center;
     }
     .doc-meta span { white-space: nowrap; }
-
     .decision-alert {
       display: inline-flex;
       align-items: center;
-      gap: 8px;
-      min-height: 24px;
-      padding: 0 9px;
-      border-radius: 999px;
-      background: var(--color-alert-soft);
-      border: 1px solid color-mix(in srgb, var(--color-alert) 24%, var(--color-border));
-      color: var(--color-alert);
-      font-size: 0.74rem;
-      font-weight: 700;
-    }
-    .decision-alert .bang { font-size: 0.82rem; line-height: 1; }
-
-    .comment-pill {
-      display: inline-flex;
-      align-items: center;
-      gap: 5px;
       min-height: 22px;
       padding: 0 8px;
       border-radius: 999px;
-      background: color-mix(in srgb, var(--color-accent) 7%, white);
-      border: 1px solid color-mix(in srgb, var(--color-accent) 16%, var(--color-border));
-      color: var(--color-accent);
+      background: var(--color-alert-soft);
+      border: 1px solid rgba(177, 90, 102, 0.2);
+      color: var(--color-alert);
       font-size: 0.7rem;
       font-weight: 700;
     }
 
+    .doc-side {
+      display: grid;
+      grid-template-columns: minmax(0, 1fr) auto;
+      gap: 10px;
+      align-items: center;
+      min-width: 0;
+    }
     .steps-wrap {
       display: grid;
-      gap: 3px;
+      gap: 4px;
       min-width: 0;
     }
     .steps-deadline {
+      min-height: 20px;
       display: flex;
       justify-content: center;
-      min-height: 14px;
+      align-items: center;
     }
     .approval-date-chip {
       display: inline-flex;
       align-items: center;
       justify-content: center;
-      min-height: 18px;
-      padding: 0 8px;
-      border-radius: 999px;
-      border: 1px solid color-mix(in srgb, var(--color-primary) 20%, var(--color-border));
-      background: color-mix(in srgb, var(--color-primary) 8%, white);
+      min-height: 20px;
       color: var(--color-primary);
-      font-size: 0.64rem;
-      font-weight: 700;
+      font-size: 0.72rem;
+      font-weight: 800;
       letter-spacing: 0.01em;
       white-space: nowrap;
     }
     .steps {
       display: flex;
-      gap: 6px;
+      gap: 8px;
       align-items: center;
       min-width: 0;
     }
     .step {
       flex: 1 1 0;
       min-width: 120px;
-      min-height: 30px;
+      min-height: 34px;
       border-radius: 999px;
       border: 1px solid var(--color-border);
-      background: var(--color-surface);
+      background: rgba(255,255,255,0.76);
       color: var(--color-text-faint);
-      padding: 0 10px;
-      font-size: 0.75rem;
+      padding: 0 12px;
+      font-size: 0.76rem;
       font-weight: 700;
       display: inline-flex;
       align-items: center;
       justify-content: center;
-      text-align: center;
-      line-height: 1.1;
-      transition: transform var(--transition), background var(--transition), border-color var(--transition), color var(--transition);
       white-space: nowrap;
+      text-align: center;
     }
-    .step:hover { transform: translateY(-1px); }
     .step.is-done {
       background: var(--color-success-soft);
       border-color: var(--color-success-border);
@@ -313,31 +284,29 @@
     }
     .step.is-current {
       background: var(--color-primary-soft);
-      border-color: color-mix(in srgb, var(--color-primary) 34%, var(--color-border));
+      border-color: rgba(171,79,115,0.24);
       color: var(--color-primary);
     }
 
     .mkt-pill {
-      min-height: 30px;
-      padding: 0 12px;
+      min-height: 34px;
+      padding: 0 13px;
       border-radius: 999px;
-      border: 1px solid rgba(154, 123, 39, 0.24);
-      background: linear-gradient(180deg, rgba(249, 245, 231, 0.88), rgba(246, 239, 215, 0.92));
-      color: #8d6d16;
-      font-size: 0.75rem;
+      border: 1px solid rgba(154, 123, 39, 0.3);
+      background: linear-gradient(180deg, #f8f1df 0%, #eee1bb 100%);
+      color: #866514;
+      font-size: 0.76rem;
       font-weight: 700;
       display: inline-flex;
       align-items: center;
       gap: 8px;
       white-space: nowrap;
-      justify-self: end;
-      box-shadow: none;
+      box-shadow: inset 0 1px 0 rgba(255,255,255,0.55);
     }
-    .mkt-pill:hover { transform: translateY(-1px); }
     .mkt-pill.is-active {
-      background: linear-gradient(180deg, rgba(229, 214, 160, 0.95), rgba(220, 201, 137, 0.98));
-      border-color: rgba(141, 109, 22, 0.4);
-      color: #77580a;
+      background: linear-gradient(180deg, #b68c28 0%, #87630d 100%);
+      border-color: rgba(111, 81, 10, 0.74);
+      color: #fff7df;
     }
     .mkt-icon {
       width: 20px;
@@ -345,174 +314,141 @@
       border-radius: 999px;
       display: inline-grid;
       place-items: center;
-      background: rgba(141, 109, 22, 0.12);
-      border: 1px solid rgba(141, 109, 22, 0.16);
-      font-size: 0.78rem;
+      background: rgba(134, 101, 20, 0.14);
+      border: 1px solid rgba(134, 101, 20, 0.16);
+      font-size: 0.8rem;
       line-height: 1;
       font-weight: 700;
     }
     .mkt-pill.is-active .mkt-icon {
-      background: rgba(141, 109, 22, 0.18);
-      border-color: rgba(141, 109, 22, 0.24);
+      background: rgba(255, 247, 223, 0.16);
+      border-color: rgba(255, 247, 223, 0.2);
+      color: #fff7df;
     }
 
     .row-actions {
       display: flex;
-      gap: 6px;
-      justify-content: flex-end;
+      gap: 8px;
+      align-items: center;
+      justify-self: end;
     }
     .mini-btn {
-      min-height: 32px;
-      min-width: 32px;
-      padding: 0 10px;
-      border-radius: 11px;
+      width: 36px;
+      height: 36px;
+      border-radius: 13px;
       border: 1px solid var(--color-border);
-      background: var(--color-surface);
-      color: var(--color-text-muted);
-      font-size: 0.88rem;
-    }
-    .mini-btn:hover { color: var(--color-primary); border-color: color-mix(in srgb, var(--color-primary) 32%, var(--color-border)); }
-    .mini-btn.delete:hover { color: var(--color-alert); border-color: rgba(198,90,101,0.3); }
-
-    .comment-box {
-      display: none;
-      grid-column: 1 / -1;
-      margin-top: -2px;
-      padding: 0 2px 2px 2px;
-    }
-    .comment-box.open { display: block; }
-    .comment-content {
-      padding: 10px 12px;
-      border-radius: 14px;
-      background: color-mix(in srgb, var(--color-accent) 7%, white);
-      border: 1px solid color-mix(in srgb, var(--color-accent) 16%, var(--color-border));
-      color: var(--color-text-muted);
-      font-size: var(--text-sm);
-    }
-
-    .empty {
-      padding: 42px 20px;
       background: var(--color-surface-2);
-      border: 1px dashed var(--color-border);
-      border-radius: 24px;
+      color: var(--color-text-muted);
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 0.92rem;
+      flex-shrink: 0;
+    }
+    .mini-btn:hover { color: var(--color-primary); }
+    .mini-btn.delete:hover { color: var(--color-alert); }
+
+    .empty-state {
+      padding: 30px 24px;
       text-align: center;
+      background: rgba(255,255,255,0.58);
+      border: 1px dashed var(--color-border);
+      border-radius: 22px;
       color: var(--color-text-muted);
     }
 
     .modal {
       position: fixed;
       inset: 0;
+      background: rgba(38, 25, 31, 0.28);
       display: none;
       align-items: center;
       justify-content: center;
       padding: 20px;
-      background: rgba(36, 19, 27, 0.24);
-      backdrop-filter: blur(8px);
       z-index: 50;
     }
     .modal.open { display: flex; }
     .modal-card {
-      width: min(900px, 100%);
-      max-height: min(94dvh, 980px);
+      width: min(720px, 100%);
+      max-height: min(90dvh, 920px);
       overflow: auto;
-      background: color-mix(in srgb, var(--color-surface) 97%, transparent);
-      border: 1px solid var(--color-border);
+      background: #fcfafb;
       border-radius: 28px;
+      border: 1px solid var(--color-border);
       box-shadow: var(--shadow-md);
-      padding: 18px 18px 16px;
+      padding: 22px;
     }
     .modal-head {
       display: flex;
-      align-items: flex-start;
       justify-content: space-between;
       gap: 16px;
-      margin-bottom: 16px;
+      margin-bottom: 18px;
     }
     .modal-head h2 {
       font-family: var(--font-display);
-      font-size: var(--text-lg);
-      line-height: 1.05;
+      font-size: 1.28rem;
       margin-bottom: 4px;
     }
-    .modal-head p { color: var(--color-text-muted); font-size: var(--text-sm); }
+    .modal-head p { color: var(--color-text-muted); font-size: 0.9rem; }
     .close-btn {
-      width: 40px;
-      height: 40px;
+      width: 38px;
+      height: 38px;
       border-radius: 14px;
       border: 1px solid var(--color-border);
       background: var(--color-surface-2);
-      color: var(--color-text-muted);
       flex-shrink: 0;
     }
-    .form-grid { display: grid; gap: 10px; }
-    .grid-2 { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; }
-    .grid-3 { display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 10px; }
-    .field { display: grid; gap: 5px; }
-    .field label { font-size: var(--text-sm); font-weight: 700; }
-    .field small { color: var(--color-text-faint); font-size: var(--text-xs); }
+    .form-grid { display: grid; gap: 14px; }
+    .grid-2 {
+      display: grid;
+      grid-template-columns: repeat(2, minmax(0, 1fr));
+      gap: 12px;
+    }
+    .field label {
+      display: block;
+      margin-bottom: 6px;
+      font-size: 0.84rem;
+      font-weight: 700;
+      color: var(--color-text-muted);
+    }
+    .field small {
+      display: block;
+      margin-top: 6px;
+      font-size: 0.76rem;
+      color: var(--color-text-faint);
+    }
     .modal-actions {
       display: flex;
       justify-content: flex-end;
       gap: 10px;
-      margin-top: 4px;
+      margin-top: 8px;
     }
     .btn {
       min-height: 42px;
       padding: 0 16px;
       border-radius: 14px;
-      font-size: var(--text-sm);
-      font-weight: 700;
       border: 1px solid var(--color-border);
       background: var(--color-surface-2);
+      font-weight: 700;
     }
     .btn.primary {
-      background: linear-gradient(135deg, var(--color-primary), var(--color-accent));
-      border-color: transparent;
-      color: white;
+      background: var(--color-primary);
+      border-color: var(--color-primary);
+      color: #fff;
     }
 
-    @media (max-width: 1120px) {
-      .toolbar { grid-template-columns: 1fr; }
-      .doc-row { grid-template-columns: 1fr; align-items: stretch; }
-      .row-actions { justify-content: flex-start; }
+    @media (max-width: 1100px) {
+      .doc-row { grid-template-columns: 1fr; }
+      .doc-side, .row-actions { justify-self: start; }
     }
     @media (max-width: 760px) {
-      .shell { width: min(100% - 10px, 100%); margin: 5px; padding: 14px; border-radius: 22px; }
-      .grid-2, .grid-3 { grid-template-columns: 1fr; }
+      .shell { width: min(100% - 14px, 100%); padding: 14px; border-radius: 24px; }
+      .toolbar, .grid-2 { grid-template-columns: 1fr; }
+      .doc-side { grid-template-columns: 1fr; }
       .steps { flex-wrap: wrap; }
-      .step { flex: 1 1 calc(50% - 6px); min-width: 144px; }
-      .modal-card { padding: 16px; border-radius: 22px; }
-    }
-    @media (max-width: 520px) {
-      .doc-meta span { white-space: normal; }
-      .step { flex: 1 1 100%; min-width: 100%; }
+      .step { min-width: calc(50% - 4px); }
     }
   </style>
-
-    <script>
-      const api = {
-        async getDocuments() {
-          const res = await fetch('/api/documents');
-          return res.json();
-        },
-        async getSuppliers() {
-          const res = await fetch('/api/suppliers');
-          return res.json();
-        },
-        async saveDocument(doc) {
-          const res = await fetch('/api/documents', {
-            method: 'POST',
-            headers: { 'Content-Type': 'application/json' },
-            body: JSON.stringify(doc)
-          });
-          return res.json();
-        },
-        async deleteDocument(id) {
-          await fetch(`/api/documents/${id}`, { method: 'DELETE' });
-        }
-      };
-    </script>
-
 </head>
 <body>
   <div class="shell">
@@ -526,22 +462,18 @@
             <path d="M9.2 15.2H13.6" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"/>
           </svg>
         </div>
-        <div>
-          <h1>Статус документов</h1>
-        </div>
+        <h1>Статус документов</h1>
       </div>
-      <div style="display:flex; gap:8px; align-items:center;">
-      <button class="icon-btn" type="button" id="projectsMonthBtn" aria-label="Список проектов за месяц">≡</button>
-      <button class="icon-btn" type="button" id="openModalBtn" aria-label="Добавить документ">+</button>
-    </div>
+      <div class="topbar-actions">
+        <button class="icon-btn" type="button" id="projectsMonthBtn" aria-label="Список проектов за месяц">≡</button>
+        <button class="icon-btn" type="button" id="openModalBtn" aria-label="Добавить документ">+</button>
+      </div>
     </header>
 
     <section class="toolbar" aria-label="Фильтры">
       <div class="month-switcher">
         <button class="month-nav" type="button" id="prevMonthBtn" aria-label="Предыдущий месяц">‹</button>
-        <div class="month-current">
-          <input type="month" id="activeMonth" />
-        </div>
+        <div class="month-current"><input type="month" id="activeMonth" /></div>
         <button class="month-nav" type="button" id="nextMonthBtn" aria-label="Следующий месяц">›</button>
       </div>
       <div class="compact-filter">
@@ -559,14 +491,12 @@
     <main>
       <section class="list" id="docsList"></section>
     </main>
-  
+  </div>
 
   <div class="modal" id="projectsModal" aria-hidden="true">
     <div class="modal-card" style="width:min(480px,100%);" role="dialog" aria-modal="true" aria-labelledby="projectsModalTitle">
       <div class="modal-head">
-        <div>
-          <h2 id="projectsModalTitle">Проекты за месяц</h2>
-        </div>
+        <div><h2 id="projectsModalTitle">Проекты за месяц</h2></div>
         <button class="close-btn" type="button" id="closeProjectsModalBtn" aria-label="Закрыть">✕</button>
       </div>
       <div id="projectsMonthList" style="display:grid; gap:8px;"></div>
@@ -588,7 +518,7 @@
         <div class="grid-2">
           <div class="field">
             <label for="monthInput">Месяц</label>
-            <input type="month" id="monthInput" />
+            <input type="month" id="monthInput" required />
           </div>
           <div class="field">
             <label for="appendixNumber">Номер приложения</label>
@@ -621,6 +551,22 @@
           </div>
         </div>
 
+        <div class="grid-2">
+          <div class="field">
+            <label for="approvalDate">Дата согласования</label>
+            <input type="date" id="approvalDate" />
+            <small>По умолчанию проставляется через 10 дней, но дату можно изменить вручную.</small>
+          </div>
+          <div class="field">
+            <label for="statusInput">Текущий этап</label>
+            <select id="statusInput">
+              <option value="mine">На мне</option>
+              <option value="review">На согласовании</option>
+              <option value="approved">Согласовано</option>
+            </select>
+          </div>
+        </div>
+
         <div class="field">
           <label for="commentInput">Комментарий</label>
           <textarea id="commentInput" placeholder="Необязательно. Например: ждем правку, отправить повторно, проверить после ответа"></textarea>
@@ -628,142 +574,169 @@
 
         <div class="modal-actions">
           <button class="btn" type="button" id="cancelBtn">Отмена</button>
-          <button class="btn primary" type="submit" id="saveBtn">Сохранить</button>
+          <button class="btn primary" type="submit">Сохранить</button>
         </div>
       </form>
     </div>
   </div>
 
   <script>
-    const LEGACY_KEYS = ['approval-tracker-docs-v3', 'approval-tracker-docs-v2', 'approval-tracker-docs-v1'];
-    const STORAGE_KEY = 'approval-tracker-docs-v4';
-    const SUPPLIER_KEY = 'approval-tracker-suppliers-v1';
+    const STORAGE_KEY = 'doc-tracker-premium-v4';
     const STEPS = [
-      { key: 'on_me', label: 'На мне' },
-      { key: 'in_review', label: 'На согласовании' },
+      { key: 'mine', label: 'На мне' },
+      { key: 'review', label: 'На согласовании' },
       { key: 'approved', label: 'Согласовано' }
     ];
 
-    const state = {
-      docs: loadDocs(),
-      suppliers: loadSuppliers(),
-      activeMonth: getCurrentMonth(),
-      openComments: new Set()
-    };
-
+    const docsList = document.getElementById('docsList');
     const activeMonthInput = document.getElementById('activeMonth');
     const statusFilter = document.getElementById('statusFilter');
     const searchInput = document.getElementById('searchInput');
-    const docsList = document.getElementById('docsList');
     const openModalBtn = document.getElementById('openModalBtn');
-    const projectsMonthBtn = document.getElementById('projectsMonthBtn');
-    const projectsModal = document.getElementById('projectsModal');
-    const closeProjectsModalBtn = document.getElementById('closeProjectsModalBtn');
-    const projectsMonthList = document.getElementById('projectsMonthList');
+    const docModal = document.getElementById('docModal');
     const closeModalBtn = document.getElementById('closeModalBtn');
     const cancelBtn = document.getElementById('cancelBtn');
-    const docModal = document.getElementById('docModal');
-    const docForm = document.getElementById('docForm');
-    const docId = document.getElementById('docId');
-    const monthInput = document.getElementById('monthInput');
-    const appendixNumber = document.getElementById('appendixNumber');
-    const internalNumber = document.getElementById('internalNumber');
-    const tenderNumber = document.getElementById('tenderNumber');
-    const projectName = document.getElementById('projectName');
-    const counterparty = document.getElementById('counterparty');
-    const commentInput = document.getElementById('commentInput');
-    const approvalDeadline = document.getElementById('approvalDeadline');
-    const supplierSuggestions = document.getElementById('counterpartySuggestions');
-    const modalTitle = document.getElementById('modalTitle');
-    const saveBtn = document.getElementById('saveBtn');
-    const prevMonthBtn = document.getElementById('prevMonthBtn');
-    const nextMonthBtn = document.getElementById('nextMonthBtn');
+    const form = document.getElementById('docForm');
+    const projectsModal = document.getElementById('projectsModal');
+    const projectsMonthBtn = document.getElementById('projectsMonthBtn');
+    const closeProjectsModalBtn = document.getElementById('closeProjectsModalBtn');
+    const projectsMonthList = document.getElementById('projectsMonthList');
 
-    activeMonthInput.value = state.activeMonth;
-    monthInput.value = state.activeMonth;
-    renderSupplierSuggestions();
-    render();
+    let documents = loadDocuments().map(doc => ({
+      ...doc,
+      approvalDate: doc.approvalDate || '',
+      inMkt: !!doc.inMkt
+    }));
+
+    let activeMonth = getCurrentMonth();
+    let editId = null;
+
+    activeMonthInput.value = activeMonth;
+
+    renderDocuments();
+    bindEvents();
 
     function getCurrentMonth() {
       const now = new Date();
       return `${now.getFullYear()}-${String(now.getMonth() + 1).padStart(2, '0')}`;
     }
 
-    function loadDocs() {
-      try {
-        const current = localStorage.getItem(STORAGE_KEY);
-        if (current) return JSON.parse(current);
+    function defaultApprovalDate() {
+      const d = new Date();
+      d.setDate(d.getDate() + 10);
+      return d.toISOString().slice(0, 10);
+    }
 
-        for (const key of LEGACY_KEYS) {
-          const raw = localStorage.getItem(key);
-          if (!raw) continue;
-          const parsed = JSON.parse(raw).map((doc, index) => ({
-            ...doc,
-            internalNumber: doc.internalNumber || '',
-            tenderNumber: doc.tenderNumber || '',
-            comment: doc.comment || '',
-            mktDone: Boolean(doc.mktDone),
-            sortIndex: Number.isFinite(doc.sortIndex) ? doc.sortIndex : index
-          }));
-          localStorage.setItem(STORAGE_KEY, JSON.stringify(parsed));
-          return parsed;
+    function escapeHtml(value = '') {
+      return String(value)
+        .replaceAll('&', '&amp;')
+        .replaceAll('<', '&lt;')
+        .replaceAll('>', '&gt;')
+        .replaceAll('"', '&quot;')
+        .replaceAll("'", '&#39;');
+    }
+
+    function formatApprovalDate(value) {
+      if (!value) return '';
+      const [y, m, d] = value.split('-');
+      return y && m && d ? `${d}.${m}.${y}` : value;
+    }
+
+    function formatMonthLabel(monthValue) {
+      const [year, month] = monthValue.split('-');
+      const date = new Date(Number(year), Number(month) - 1, 1);
+      return date.toLocaleString('ru-RU', { month: 'long', year: 'numeric' });
+    }
+
+    function loadDocuments() {
+      try {
+        return JSON.parse(localStorage.getItem(STORAGE_KEY) || '[]');
+      } catch {
+        return [];
+      }
+    }
+
+    function saveDocuments() {
+      localStorage.setItem(STORAGE_KEY, JSON.stringify(documents));
+    }
+
+    function bindEvents() {
+      openModalBtn.addEventListener('click', () => openModal());
+      closeModalBtn.addEventListener('click', closeModal);
+      cancelBtn.addEventListener('click', closeModal);
+      docModal.addEventListener('click', (e) => { if (e.target === docModal) closeModal(); });
+
+      projectsMonthBtn.addEventListener('click', openProjectsModal);
+      closeProjectsModalBtn.addEventListener('click', closeProjectsModal);
+      projectsModal.addEventListener('click', (e) => { if (e.target === projectsModal) closeProjectsModal(); });
+
+      activeMonthInput.addEventListener('change', () => {
+        activeMonth = activeMonthInput.value || getCurrentMonth();
+        renderDocuments();
+      });
+
+      document.getElementById('prevMonthBtn').addEventListener('click', () => shiftMonth(-1));
+      document.getElementById('nextMonthBtn').addEventListener('click', () => shiftMonth(1));
+      statusFilter.addEventListener('change', renderDocuments);
+      searchInput.addEventListener('input', renderDocuments);
+
+      form.addEventListener('submit', handleSubmit);
+    }
+
+    function shiftMonth(delta) {
+      const [year, month] = activeMonth.split('-').map(Number);
+      const date = new Date(year, month - 1 + delta, 1);
+      activeMonth = `${date.getFullYear()}-${String(date.getMonth() + 1).padStart(2, '0')}`;
+      activeMonthInput.value = activeMonth;
+      renderDocuments();
+    }
+
+    function openModal(id = null) {
+      editId = id;
+      form.reset();
+      document.getElementById('monthInput').value = activeMonth;
+      document.getElementById('approvalDate').value = defaultApprovalDate();
+      document.getElementById('statusInput').value = 'mine';
+
+      if (id) {
+        const doc = documents.find(item => item.id === id);
+        if (doc) {
+          document.getElementById('docId').value = doc.id;
+          document.getElementById('monthInput').value = doc.month;
+          document.getElementById('appendixNumber').value = doc.applicationNumber;
+          document.getElementById('projectName').value = doc.projectName;
+          document.getElementById('counterparty').value = doc.counterparty;
+          document.getElementById('internalNumber').value = doc.internalNumber || '';
+          document.getElementById('tenderNumber').value = doc.tenderNumber || '';
+          document.getElementById('approvalDate').value = doc.approvalDate || defaultApprovalDate();
+          document.getElementById('statusInput').value = doc.status || 'mine';
+          document.getElementById('commentInput').value = doc.comment || '';
+          document.getElementById('modalTitle').textContent = 'Редактировать документ';
         }
-        return [];
-      } catch {
-        return [];
+      } else {
+        document.getElementById('modalTitle').textContent = 'Новый документ';
       }
+
+      docModal.classList.add('open');
+      docModal.setAttribute('aria-hidden', 'false');
     }
 
-    function loadSuppliers() {
-      try {
-        const raw = localStorage.getItem(SUPPLIER_KEY);
-        return raw ? JSON.parse(raw) : [];
-      } catch {
-        return [];
-      }
-    }
-
-    function saveDocs() {
-      localStorage.setItem(STORAGE_KEY, JSON.stringify(state.docs));
-    }
-
-    function saveSuppliers() {
-      localStorage.setItem(SUPPLIER_KEY, JSON.stringify(state.suppliers));
-    }
-
-    function rememberSupplier(name) {
-      const value = String(name || '').trim();
-      if (!value) return;
-      const exists = state.suppliers.some(item => item.toLowerCase() === value.toLowerCase());
-      if (!exists) {
-        state.suppliers = [...state.suppliers, value].sort((a, b) => a.localeCompare(b, 'ru'));
-        saveSuppliers();
-        renderSupplierSuggestions();
-      }
-    }
-
-    function renderSupplierSuggestions() {
-      supplierSuggestions.innerHTML = state.suppliers.map(name => `<option value="${escapeHtml(name)}"></option>`).join('');
-    }
-
-    function render() {
-      const filtered = getFilteredDocs();
-      renderList(filtered);
-    }
-
-    function renderProjectsMonthList() {
-      const title = document.getElementById('projectsModalTitle');
-      title.textContent = `Проекты за ${formatMonth(state.activeMonth)}`;
-      const items = state.docs.filter(doc => doc.month === state.activeMonth);
-      if (!items.length) {
-        projectsMonthList.innerHTML = '<div class="empty" style="padding:20px; border-radius:18px;">В этом месяце пока нет проектов.</div>';
-        return;
-      }
-      projectsMonthList.innerHTML = items.map(doc => `<div style="padding:10px 12px; border:1px solid var(--color-border); border-radius:14px; background:var(--color-surface-2); font-size:var(--text-sm); color:var(--color-text);">${escapeHtml(doc.projectName || displayAppendix(doc.appendixNumber))} — ${escapeHtml(doc.counterparty)}</div>`).join('');
+    function closeModal() {
+      editId = null;
+      docModal.classList.remove('open');
+      docModal.setAttribute('aria-hidden', 'true');
+      form.reset();
     }
 
     function openProjectsModal() {
-      renderProjectsMonthList();
+      const docs = documents
+        .filter(doc => doc.month === activeMonth)
+        .sort((a, b) => a.projectName.localeCompare(b.projectName, 'ru'));
+
+      projectsMonthList.innerHTML = docs.length
+        ? docs.map(doc => `<div style="padding:10px 12px;border:1px solid var(--color-border);border-radius:14px;background:white;">${escapeHtml(doc.projectName)}</div>`).join('')
+        : `<div class="empty-state">В этом месяце пока нет проектов.</div>`;
+
       projectsModal.classList.add('open');
       projectsModal.setAttribute('aria-hidden', 'false');
     }
@@ -773,68 +746,97 @@
       projectsModal.setAttribute('aria-hidden', 'true');
     }
 
-    function getFilteredDocs() {
-      const q = searchInput.value.trim().toLowerCase();
-      const statusValue = statusFilter.value;
-      return state.docs
-        .filter(doc => doc.month === state.activeMonth)
-        .filter(doc => {
-          if (statusValue === 'approved') return doc.status === 'approved';
-          if (statusValue === 'active') return doc.status !== 'approved';
-          return true;
-        })
-        .filter(doc => {
-          if (!q) return true;
-          const haystack = [displayAppendix(doc.appendixNumber), doc.internalNumber, doc.projectName, doc.counterparty, doc.tenderNumber, doc.comment].join(' ').toLowerCase();
-          return haystack.includes(q);
-        })
-        .sort((a, b) => {
-          if (a.status === 'approved' && b.status !== 'approved') return 1;
-          if (a.status !== 'approved' && b.status === 'approved') return -1;
-          return (a.sortIndex ?? 0) - (b.sortIndex ?? 0);
-        });
+    function handleSubmit(event) {
+      event.preventDefault();
+
+      const doc = {
+        id: editId || crypto.randomUUID(),
+        month: document.getElementById('monthInput').value,
+        applicationNumber: document.getElementById('appendixNumber').value.trim(),
+        projectName: document.getElementById('projectName').value.trim(),
+        counterparty: document.getElementById('counterparty').value.trim(),
+        internalNumber: document.getElementById('internalNumber').value.trim(),
+        tenderNumber: document.getElementById('tenderNumber').value.trim(),
+        approvalDate: document.getElementById('approvalDate').value || defaultApprovalDate(),
+        status: document.getElementById('statusInput').value,
+        comment: document.getElementById('commentInput').value.trim(),
+        inMkt: editId ? (documents.find(item => item.id === editId)?.inMkt ?? false) : false,
+        createdAt: editId ? (documents.find(item => item.id === editId)?.createdAt || new Date().toISOString()) : new Date().toISOString()
+      };
+
+      if (doc.status !== 'review' && !doc.approvalDate) {
+        doc.approvalDate = defaultApprovalDate();
+      }
+
+      if (editId) {
+        documents = documents.map(item => item.id === editId ? doc : item);
+      } else {
+        documents.unshift(doc);
+      }
+
+      saveDocuments();
+      activeMonth = doc.month;
+      activeMonthInput.value = activeMonth;
+      closeModal();
+      renderDocuments();
     }
 
-    function renderList(list) {
-      if (!list.length) {
-        docsList.innerHTML = `<div class="empty">В этом месяце пока нет документов по текущему фильтру.</div>`;
+    function renderDocuments() {
+      const query = searchInput.value.trim().toLowerCase();
+      const filtered = documents.filter(doc => {
+        if (doc.month !== activeMonth) return false;
+        if (statusFilter.value === 'active' && doc.status === 'approved') return false;
+        if (statusFilter.value === 'approved' && doc.status !== 'approved') return false;
+        if (!query) return true;
+        const haystack = [doc.applicationNumber, doc.projectName, doc.counterparty, doc.internalNumber, doc.tenderNumber, doc.comment].join(' ').toLowerCase();
+        return haystack.includes(query);
+      });
+
+      if (!filtered.length) {
+        docsList.innerHTML = `<div class="empty-state">За ${formatMonthLabel(activeMonth)} пока нет документов.</div>`;
         return;
       }
 
-      docsList.innerHTML = list.map(doc => {
-        const hasDecisionAlert = isDecisionInProgress(doc.tenderNumber);
-        const hasComment = Boolean(doc.comment && doc.comment.trim());
-        const commentOpen = state.openComments.has(doc.id);
+      docsList.innerHTML = filtered.map(doc => {
+        const deadlineLabel = doc.status === 'review' ? `Согласовать до ${formatApprovalDate(doc.approvalDate || defaultApprovalDate())}` : '';
+        const decisionBadge = (doc.tenderNumber || '').toLowerCase().includes('соглас')
+          ? `<span class="decision-alert">Решение на согласовании</span>`
+          : '';
+
+        const metaParts = [
+          `<span>Контрагент: ${escapeHtml(doc.counterparty || '—')}</span>`,
+          `<span>Решение: ${escapeHtml(doc.tenderNumber || '—')}</span>`,
+          `<span>Внутренний номер: ${escapeHtml(doc.internalNumber || '—')}</span>`,
+          doc.comment ? `<span>Комментарий: ${escapeHtml(doc.comment)}</span>` : ''
+        ].filter(Boolean).join('');
+
         return `
-          <article class="doc-row ${doc.status === 'approved' ? 'is-approved' : ''}" data-id="${doc.id}">
+          <article class="doc-row" data-row-id="${doc.id}">
             <div class="doc-main">
               <div class="doc-title-line">
-                <span class="doc-number">${escapeHtml(displayAppendix(doc.appendixNumber))}</span>
+                <span class="doc-number">Приложение ${escapeHtml(doc.applicationNumber)}</span>
                 <span class="doc-project">${escapeHtml(doc.projectName)}</span>
               </div>
               <div class="doc-meta">
-                <span>Контрагент: ${escapeHtml(doc.counterparty)}</span>
-                ${doc.tenderNumber ? `<span>Решение: ${escapeHtml(doc.tenderNumber)}</span>` : ''}
-                ${doc.internalNumber ? `<span>Внутренний номер: ${escapeHtml(doc.internalNumber)}</span>` : ''}
-                ${hasDecisionAlert ? `<button class="decision-alert" type="button" data-action="decision-help"><span class="bang">!</span> Решение на согласовании</button>` : ''}
-                ${hasComment ? `<button class="comment-pill" type="button" data-action="toggle-comment">Комментарий</button>` : ''}
+                ${metaParts}
+                ${decisionBadge}
               </div>
             </div>
-            <div class="steps">
-              ${renderSteps(doc)}
-            </div>
-            <div class="extra-tags">
-              <button class="mkt-flag ${doc.mktDone ? 'is-on' : ''}" type="button" data-action="mkt">
-                <span class="mkt-dollar">$</span>
-                В МКТ
+            <div class="doc-side">
+              <div class="steps-wrap">
+                <div class="steps-deadline">${deadlineLabel ? `<button class="approval-date-chip" type="button" data-action="edit-date">${deadlineLabel}</button>` : ''}</div>
+                <div class="steps">${renderSteps(doc)}</div>
+              </div>
+              <button class="mkt-pill ${doc.inMkt ? 'is-active' : ''}" type="button" data-action="toggle-mkt">
+                <span class="mkt-icon">$</span>
+                <span>В МКТ</span>
               </button>
             </div>
             <div class="row-actions">
-              <button class="mini-btn" type="button" data-action="duplicate" aria-label="Дублировать в новый месяц">⧉</button>
+              <button class="mini-btn" type="button" data-action="duplicate" aria-label="Копировать">⧉</button>
               <button class="mini-btn" type="button" data-action="edit" aria-label="Редактировать">✎</button>
               <button class="mini-btn delete" type="button" data-action="delete" aria-label="Удалить">✕</button>
             </div>
-            ${hasComment ? `<div class="comment-box ${commentOpen ? 'open' : ''}"><div class="comment-content">${escapeHtml(doc.comment)}</div></div>` : ''}
           </article>
         `;
       }).join('');
@@ -846,290 +848,74 @@
       const currentIndex = STEPS.findIndex(step => step.key === doc.status);
       return STEPS.map((step, index) => {
         let className = 'step';
-        if (doc.status === 'approved') {
-          className += ' is-done';
-        } else if (index < currentIndex) {
-          className += ' is-done';
-        } else if (index === currentIndex) {
-          className += ' is-current';
-        }
-        return `<button class="${className}" type="button" data-step="${step.key}">${step.label}</button>`;
+        if (index < currentIndex) className += ' is-done';
+        if (index === currentIndex) className += ' is-current';
+        if (doc.status === 'approved') className = 'step is-done';
+        return `<button class="${className}" type="button" data-action="set-status" data-status="${step.key}">${step.label}</button>`;
       }).join('');
     }
 
     function bindRowActions() {
-      document.querySelectorAll('.doc-row').forEach(row => {
-        const id = row.dataset.id;
-        row.querySelectorAll('.step').forEach(button => {
-          button.addEventListener('click', () => updateStatus(id, button.dataset.step));
+      document.querySelectorAll('[data-row-id]').forEach((row) => {
+        row.querySelectorAll('[data-action]').forEach((button) => {
+          button.onclick = () => {
+            const id = row.dataset.rowId;
+            const doc = documents.find(item => item.id === id);
+            if (!doc) return;
+            const action = button.dataset.action;
+
+            if (action === 'duplicate') {
+              const copy = {
+                ...structuredClone(doc),
+                id: crypto.randomUUID(),
+                applicationNumber: `${doc.applicationNumber} (копия)`,
+                createdAt: new Date().toISOString()
+              };
+              documents.unshift(copy);
+              saveDocuments();
+              renderDocuments();
+              return;
+            }
+
+            if (action === 'edit') {
+              openModal(doc.id);
+              return;
+            }
+
+            if (action === 'delete') {
+              if (!confirm('Удалить документ?')) return;
+              documents = documents.filter(item => item.id !== id);
+              saveDocuments();
+              renderDocuments();
+              return;
+            }
+
+            if (action === 'toggle-mkt') {
+              doc.inMkt = !doc.inMkt;
+              saveDocuments();
+              renderDocuments();
+              return;
+            }
+
+            if (action === 'edit-date') {
+              const next = prompt('Введите дату согласования в формате ГГГГ-ММ-ДД', doc.approvalDate || defaultApprovalDate());
+              if (next === null) return;
+              doc.approvalDate = next.trim() || defaultApprovalDate();
+              saveDocuments();
+              renderDocuments();
+              return;
+            }
+
+            if (action === 'set-status') {
+              doc.status = button.dataset.status;
+              if (doc.status === 'review' && !doc.approvalDate) doc.approvalDate = defaultApprovalDate();
+              saveDocuments();
+              renderDocuments();
+            }
+          };
         });
-        row.querySelector('[data-action="edit"]').addEventListener('click', () => openEdit(id));
-        row.querySelector('[data-action="delete"]').addEventListener('click', () => removeDoc(id));
-        row.querySelector('[data-action="mkt"]').addEventListener('click', () => toggleMkt(id));
-        row.querySelector('[data-action="duplicate"]').addEventListener('click', () => duplicateDoc(id));
-
-        const commentBtn = row.querySelector('[data-action="toggle-comment"]');
-        if (commentBtn) {
-          commentBtn.addEventListener('click', () => toggleComment(id));
-        }
-
-        const decisionBtn = row.querySelector('[data-action="decision-help"]');
-        if (decisionBtn) {
-          decisionBtn.addEventListener('click', () => alert('Напоминание: по этому документу тендерное решение еще на согласовании.')); 
-        }
       });
     }
-
-    function updateStatus(id, stepKey) {
-      state.docs = state.docs.map(doc => doc.id === id ? { ...doc, status: stepKey } : doc);
-      saveDocs();
-      render();
-    }
-
-    function toggleMkt(id) {
-      state.docs = state.docs.map(doc => doc.id === id ? { ...doc, mktDone: !doc.mktDone } : doc);
-      saveDocs();
-      render();
-    }
-
-    function toggleComment(id) {
-      if (state.openComments.has(id)) state.openComments.delete(id);
-      else state.openComments.add(id);
-      render();
-    }
-
-    function duplicateDoc(id) {
-      const doc = state.docs.find(item => item.id === id);
-      if (!doc) return;
-      const nextMonth = shiftMonth(doc.month || state.activeMonth, 1);
-      const duplicate = {
-        ...doc,
-        id: crypto.randomUUID(),
-        month: nextMonth,
-        appendixNumber: '',
-        status: 'on_me',
-        mktDone: false,
-        comment: doc.comment || '',
-        approvalDeadline: doc.approvalDeadline || new Date(addDays(new Date(), 10)).toISOString(),
-        sortIndex: state.docs.length ? Math.max(...state.docs.map(item => item.sortIndex ?? 0)) + 1 : 0
-      };
-      state.docs = [...state.docs, duplicate];
-      saveDocs();
-      state.activeMonth = nextMonth;
-      activeMonthInput.value = nextMonth;
-      render();
-      alert('Документ продублирован в следующий месяц. Осталось только указать новый номер приложения.');
-      openEdit(duplicate.id);
-    }
-
-    function openModal(editing = false) {
-      docModal.classList.add('open');
-      docModal.setAttribute('aria-hidden', 'false');
-      monthInput.value = monthInput.value || state.activeMonth;
-      if (!editing && !approvalDeadline.value) {
-        approvalDeadline.value = toInputDate(addDays(new Date(), 10));
-      }
-      modalTitle.textContent = editing ? 'Редактирование документа' : 'Новый документ';
-      saveBtn.textContent = editing ? 'Сохранить изменения' : 'Сохранить';
-      setTimeout(() => appendixNumber.focus(), 40);
-    }
-
-    function closeModal() {
-      docModal.classList.remove('open');
-      docModal.setAttribute('aria-hidden', 'true');
-      resetForm();
-    }
-
-    function resetForm() {
-      docForm.reset();
-      docId.value = '';
-      monthInput.value = state.activeMonth;
-      approvalDeadline.value = toInputDate(addDays(new Date(), 10));
-      modalTitle.textContent = 'Новый документ';
-      saveBtn.textContent = 'Сохранить';
-    }
-
-    function openEdit(id) {
-      const doc = state.docs.find(item => item.id === id);
-      if (!doc) return;
-      docId.value = doc.id;
-      monthInput.value = doc.month;
-      appendixNumber.value = doc.appendixNumber;
-      internalNumber.value = doc.internalNumber || '';
-      tenderNumber.value = doc.tenderNumber || '';
-      projectName.value = doc.projectName;
-      counterparty.value = doc.counterparty;
-      commentInput.value = doc.comment || '';
-      approvalDeadline.value = doc.approvalDeadline ? toInputDate(doc.approvalDeadline) : toInputDate(addDays(new Date(), 10));
-      openModal(true);
-    }
-
-    function removeDoc(id) {
-      const doc = state.docs.find(item => item.id === id);
-      if (!doc) return;
-      if (!confirm(`Удалить документ «${doc.projectName}»?`)) return;
-      state.docs = state.docs.filter(item => item.id !== id);
-      state.openComments.delete(id);
-      saveDocs();
-      render();
-    }
-
-    function displayAppendix(value) {
-      const raw = String(value || '').trim();
-      if (!raw) return 'Приложение';
-      return /^приложение/i.test(raw) ? raw : `Приложение ${raw}`;
-    }
-
-    function shiftMonth(month, diff) {
-      const [year, currentMonth] = month.split('-').map(Number);
-      const date = new Date(year, currentMonth - 1 + diff, 1);
-      return `${date.getFullYear()}-${String(date.getMonth() + 1).padStart(2, '0')}`;
-    }
-
-
-    function addDays(date, days) {
-      const copy = new Date(date);
-      copy.setDate(copy.getDate() + days);
-      return copy;
-    }
-
-    function toInputDate(value) {
-      const date = new Date(value);
-      if (Number.isNaN(date.getTime())) return '';
-      return `${date.getFullYear()}-${String(date.getMonth() + 1).padStart(2, '0')}-${String(date.getDate()).padStart(2, '0')}`;
-    }
-
-    function formatDeadline(value) {
-      if (!value) return '';
-      const date = new Date(value);
-      if (Number.isNaN(date.getTime())) return '';
-      return `${String(date.getDate()).padStart(2, '0')}.${String(date.getMonth() + 1).padStart(2, '0')}`;
-    }
-
-    function isDecisionInProgress(value) {
-      const raw = String(value || '').trim().toLowerCase();
-      return raw.includes('на согласовании');
-    }
-
-    function formatMonth(value) {
-      const [year, month] = value.split('-');
-      return new Date(Number(year), Number(month) - 1, 1).toLocaleDateString('ru-RU', { month: 'long', year: 'numeric' });
-    }
-
-    function escapeHtml(value) {
-      return String(value)
-        .replace(/&/g, '&amp;')
-        .replace(/</g, '&lt;')
-        .replace(/>/g, '&gt;')
-        .replace(/"/g, '&quot;')
-        .replace(/'/g, '&#039;');
-    }
-
-    openModalBtn.addEventListener('click', () => {
-      monthInput.value = state.activeMonth;
-      openModal(false);
-    });
-    closeModalBtn.addEventListener('click', closeModal);
-    projectsMonthBtn.addEventListener('click', openProjectsModal);
-    closeProjectsModalBtn.addEventListener('click', closeProjectsModal);
-    projectsModal.addEventListener('click', (event) => { if (event.target === projectsModal) closeProjectsModal(); });
-    cancelBtn.addEventListener('click', closeModal);
-    docModal.addEventListener('click', (event) => {
-      if (event.target === docModal) closeModal();
-    });
-    document.addEventListener('keydown', (event) => {
-      if (event.key === 'Escape' && docModal.classList.contains('open')) closeModal();
-      if (event.key === 'Escape' && projectsModal.classList.contains('open')) closeProjectsModal();
-    });
-
-    docForm.addEventListener('submit', (event) => {
-      event.preventDefault();
-      const payload = {
-        id: docId.value || crypto.randomUUID(),
-        month: monthInput.value || state.activeMonth,
-        appendixNumber: appendixNumber.value.trim(),
-        internalNumber: internalNumber.value.trim(),
-        tenderNumber: tenderNumber.value.trim(),
-        projectName: projectName.value.trim(),
-        counterparty: counterparty.value.trim(),
-        comment: commentInput.value.trim(),
-        status: 'on_me',
-        mktDone: false,
-        sortIndex: state.docs.length ? Math.max(...state.docs.map(doc => doc.sortIndex ?? 0)) + 1 : 0
-      };
-
-      if (!payload.appendixNumber || !payload.projectName || !payload.counterparty) return;
-
-      if (docId.value) {
-        const oldDoc = state.docs.find(doc => doc.id === docId.value);
-        if (oldDoc) {
-          payload.status = oldDoc.status;
-          payload.mktDone = Boolean(oldDoc.mktDone);
-          payload.sortIndex = oldDoc.sortIndex ?? 0;
-        }
-      }
-
-      const exists = state.docs.some(doc => doc.id === payload.id);
-      state.docs = exists
-        ? state.docs.map(doc => doc.id === payload.id ? payload : doc)
-        : [...state.docs, payload];
-
-      rememberSupplier(payload.counterparty);
-      saveDocs();
-      closeModal();
-      render();
-    });
-
-    const formFields = [monthInput, appendixNumber, projectName, counterparty, internalNumber, tenderNumber, commentInput];
-    formFields.forEach((field, index) => {
-      field.addEventListener('keydown', (event) => {
-        if (event.key !== 'Enter' || field.tagName === 'TEXTAREA') return;
-        event.preventDefault();
-        const next = formFields[index + 1];
-        if (next) next.focus();
-        else saveBtn.focus();
-      });
-    });
-
-    tenderNumber.addEventListener('input', () => {
-      const value = tenderNumber.value.trim().toLowerCase();
-      if (value === 'на') tenderNumber.value = 'на согласовании';
-    });
-
-    activeMonthInput.addEventListener('input', () => {
-      if (!activeMonthInput.value) return;
-      state.activeMonth = activeMonthInput.value;
-      monthInput.value = state.activeMonth;
-      render();
-    });
-    statusFilter.addEventListener('change', render);
-    searchInput.addEventListener('input', render);
-    prevMonthBtn.addEventListener('click', () => {
-      state.activeMonth = shiftMonth(state.activeMonth, -1);
-      activeMonthInput.value = state.activeMonth;
-      monthInput.value = state.activeMonth;
-      render();
-    });
-    nextMonthBtn.addEventListener('click', () => {
-      state.activeMonth = shiftMonth(state.activeMonth, 1);
-      activeMonthInput.value = state.activeMonth;
-      monthInput.value = state.activeMonth;
-      render();
-    });
   </script>
 </body>
 </html>
-
-<script>
-(async function bootstrapPersistence(){
-  try {
-    if (typeof api !== 'undefined') {
-      docs = await api.getDocuments();
-      supplierNames = await api.getSuppliers();
-      if (typeof renderAll === 'function') renderAll();
-    }
-  } catch (e) {
-    console.error('API bootstrap failed', e);
-  }
-})();
-</script>
