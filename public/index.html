@@ -170,11 +170,31 @@
       background: transparent;
     }
     .month-current input { font-weight: 700; }
+    input[type="month"], input[type="date"] {
+      color-scheme: light;
+      cursor: pointer;
+    }
+    input[type="month"]::-webkit-calendar-picker-indicator,
+    input[type="date"]::-webkit-calendar-picker-indicator {
+      width: 20px;
+      height: 20px;
+      padding: 7px;
+      margin-right: -4px;
+      border-radius: 10px;
+      opacity: 0.72;
+      cursor: pointer;
+      transition: background var(--transition), opacity var(--transition);
+    }
+    input[type="month"]::-webkit-calendar-picker-indicator:hover,
+    input[type="date"]::-webkit-calendar-picker-indicator:hover {
+      background: var(--color-primary-soft);
+      opacity: 1;
+    }
 
     .list { display: grid; gap: 10px; }
     .doc-row {
       display: grid;
-      grid-template-columns: minmax(0, 1.5fr) minmax(510px, 1.1fr) auto auto;
+      grid-template-columns: minmax(0, 1.45fr) minmax(510px, 1.15fr) auto;
       gap: 12px;
       align-items: center;
       padding: 12px 14px;
@@ -215,14 +235,86 @@
     .decision-alert {
       display: inline-flex;
       align-items: center;
-      min-height: 22px;
-      padding: 0 8px;
+      gap: 6px;
+      min-height: 24px;
+      padding: 0 9px 0 6px;
       border-radius: 999px;
-      background: var(--color-alert-soft);
-      border: 1px solid rgba(177, 90, 102, 0.2);
-      color: var(--color-alert);
+      background: #fff0f2;
+      border: 1px solid rgba(190, 44, 70, 0.28);
+      color: #b4233f;
       font-size: 0.7rem;
-      font-weight: 700;
+      font-weight: 800;
+      box-shadow: 0 3px 10px rgba(180, 35, 63, 0.06);
+    }
+    .decision-alert::before {
+      content: '!';
+      width: 16px;
+      height: 16px;
+      border-radius: 50%;
+      display: inline-grid;
+      place-items: center;
+      background: #c52f4d;
+      color: #fff;
+      font-size: 0.66rem;
+      font-weight: 900;
+      line-height: 1;
+      flex-shrink: 0;
+    }
+
+    .comment-block {
+      width: min(100%, 560px);
+      margin-top: 8px;
+    }
+    .comment-toggle {
+      min-height: 28px;
+      padding: 0 10px 0 11px;
+      border-radius: 999px;
+      border: 1px solid rgba(68, 105, 163, 0.24);
+      background: #edf4ff;
+      color: #496da7;
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+      font-size: 0.72rem;
+      font-weight: 800;
+      transition: background var(--transition), border-color var(--transition), color var(--transition);
+    }
+    .comment-toggle:hover {
+      background: #e4efff;
+      border-color: rgba(68, 105, 163, 0.38);
+      color: #355b96;
+    }
+    .comment-toggle::after {
+      content: '⌄';
+      display: inline-block;
+      font-size: 0.82rem;
+      line-height: 1;
+      transform: translateY(-1px);
+      transition: transform var(--transition);
+    }
+    .comment-block.open .comment-toggle::after {
+      transform: rotate(180deg) translateY(1px);
+    }
+    .comment-body {
+      display: none;
+      margin-top: 7px;
+      padding: 10px 12px;
+      border-radius: 14px;
+      border: 1px solid rgba(68, 105, 163, 0.18);
+      background: #f7faff;
+      color: #53677f;
+      font-size: 0.76rem;
+      line-height: 1.5;
+      white-space: pre-wrap;
+      overflow-wrap: anywhere;
+    }
+    .comment-block.open .comment-body {
+      display: block;
+      animation: commentReveal 160ms ease-out;
+    }
+    @keyframes commentReveal {
+      from { opacity: 0; transform: translateY(-3px); }
+      to { opacity: 1; transform: translateY(0); }
     }
 
     .doc-side {
@@ -291,9 +383,9 @@
     .mkt-pill {
       min-height: 34px;
       padding: 0 13px;
-      border-radius: 999px;
-      border: 1px solid rgba(154, 123, 39, 0.3);
-      background: linear-gradient(180deg, #f8f1df 0%, #eee1bb 100%);
+      border-radius: 15px;
+      border: 1px solid rgba(154, 123, 39, 0.28);
+      background: #f7f0dd;
       color: #866514;
       font-size: 0.76rem;
       font-weight: 700;
@@ -301,12 +393,15 @@
       align-items: center;
       gap: 8px;
       white-space: nowrap;
-      box-shadow: inset 0 1px 0 rgba(255,255,255,0.55);
+      box-shadow: 0 3px 9px rgba(134, 101, 20, 0.05);
+      transition: background var(--transition), border-color var(--transition), transform var(--transition);
     }
+    .mkt-pill:hover { transform: translateY(-1px); }
     .mkt-pill.is-active {
-      background: linear-gradient(180deg, #b68c28 0%, #87630d 100%);
-      border-color: rgba(111, 81, 10, 0.74);
-      color: #fff7df;
+      background: #9a7317;
+      border-color: #84610f;
+      color: #fff9e9;
+      box-shadow: 0 4px 10px rgba(111, 81, 10, 0.14);
     }
     .mkt-icon {
       width: 20px;
@@ -437,6 +532,39 @@
       color: #fff;
     }
 
+
+    .projects-month-caption {
+      margin-top: -8px;
+      margin-bottom: 14px;
+      color: var(--color-text-muted);
+      font-size: 0.84rem;
+    }
+    .projects-month-list {
+      display: grid;
+      gap: 9px;
+    }
+    .project-month-item {
+      padding: 12px 14px;
+      border: 1px solid var(--color-border);
+      border-radius: 16px;
+      background: #fff;
+      box-shadow: 0 5px 14px rgba(92, 63, 74, 0.035);
+    }
+    .project-month-name {
+      font-family: var(--font-display);
+      font-size: 0.92rem;
+      font-weight: 700;
+      line-height: 1.35;
+    }
+    .project-month-counterparty {
+      margin-top: 3px;
+      color: var(--color-text-muted);
+      font-size: 0.8rem;
+      line-height: 1.35;
+    }
+    .date-modal-card { width: min(390px, 100%); }
+    .date-modal-field { margin-top: 4px; }
+
     @media (max-width: 1100px) {
       .doc-row { grid-template-columns: 1fr; }
       .doc-side, .row-actions { justify-self: start; }
@@ -494,12 +622,33 @@
   </div>
 
   <div class="modal" id="projectsModal" aria-hidden="true">
-    <div class="modal-card" style="width:min(480px,100%);" role="dialog" aria-modal="true" aria-labelledby="projectsModalTitle">
+    <div class="modal-card" style="width:min(520px,100%);" role="dialog" aria-modal="true" aria-labelledby="projectsModalTitle">
       <div class="modal-head">
-        <div><h2 id="projectsModalTitle">Проекты за месяц</h2></div>
+        <div><h2 id="projectsModalTitle">Документы за месяц</h2></div>
         <button class="close-btn" type="button" id="closeProjectsModalBtn" aria-label="Закрыть">✕</button>
       </div>
-      <div id="projectsMonthList" style="display:grid; gap:8px;"></div>
+      <div class="projects-month-caption" id="projectsMonthCaption"></div>
+      <div class="projects-month-list" id="projectsMonthList"></div>
+    </div>
+  </div>
+
+  <div class="modal" id="dateModal" aria-hidden="true">
+    <div class="modal-card date-modal-card" role="dialog" aria-modal="true" aria-labelledby="dateModalTitle">
+      <div class="modal-head">
+        <div>
+          <h2 id="dateModalTitle">Дата согласования</h2>
+          <p id="dateModalProject"></p>
+        </div>
+        <button class="close-btn" type="button" id="closeDateModalBtn" aria-label="Закрыть">✕</button>
+      </div>
+      <div class="field date-modal-field">
+        <label for="quickApprovalDate">Выберите дату</label>
+        <input type="date" id="quickApprovalDate" />
+      </div>
+      <div class="modal-actions">
+        <button class="btn" type="button" id="cancelDateBtn">Отмена</button>
+        <button class="btn primary" type="button" id="saveDateBtn">Сохранить</button>
+      </div>
     </div>
   </div>
 
@@ -601,6 +750,13 @@
     const projectsMonthBtn = document.getElementById('projectsMonthBtn');
     const closeProjectsModalBtn = document.getElementById('closeProjectsModalBtn');
     const projectsMonthList = document.getElementById('projectsMonthList');
+    const projectsMonthCaption = document.getElementById('projectsMonthCaption');
+    const dateModal = document.getElementById('dateModal');
+    const closeDateModalBtn = document.getElementById('closeDateModalBtn');
+    const cancelDateBtn = document.getElementById('cancelDateBtn');
+    const saveDateBtn = document.getElementById('saveDateBtn');
+    const quickApprovalDate = document.getElementById('quickApprovalDate');
+    const dateModalProject = document.getElementById('dateModalProject');
 
     let documents = loadDocuments().map(doc => ({
       ...doc,
@@ -610,6 +766,8 @@
 
     let activeMonth = getCurrentMonth();
     let editId = null;
+    let duplicateSourceDoc = null;
+    let quickDateDocId = null;
 
     activeMonthInput.value = activeMonth;
 
@@ -670,6 +828,11 @@
       closeProjectsModalBtn.addEventListener('click', closeProjectsModal);
       projectsModal.addEventListener('click', (e) => { if (e.target === projectsModal) closeProjectsModal(); });
 
+      closeDateModalBtn.addEventListener('click', closeDateModal);
+      cancelDateBtn.addEventListener('click', closeDateModal);
+      saveDateBtn.addEventListener('click', saveQuickApprovalDate);
+      dateModal.addEventListener('click', (e) => { if (e.target === dateModal) closeDateModal(); });
+
       activeMonthInput.addEventListener('change', () => {
         activeMonth = activeMonthInput.value || getCurrentMonth();
         renderDocuments();
@@ -683,22 +846,43 @@
       form.addEventListener('submit', handleSubmit);
     }
 
-    function shiftMonth(delta) {
-      const [year, month] = activeMonth.split('-').map(Number);
+    function monthWithOffset(monthValue, delta) {
+      const [year, month] = monthValue.split('-').map(Number);
       const date = new Date(year, month - 1 + delta, 1);
-      activeMonth = `${date.getFullYear()}-${String(date.getMonth() + 1).padStart(2, '0')}`;
+      return `${date.getFullYear()}-${String(date.getMonth() + 1).padStart(2, '0')}`;
+    }
+
+    function shiftMonth(delta) {
+      activeMonth = monthWithOffset(activeMonth, delta);
       activeMonthInput.value = activeMonth;
       renderDocuments();
     }
 
-    function openModal(id = null) {
+    function openModal(id = null, duplicateDoc = null) {
       editId = id;
+      duplicateSourceDoc = duplicateDoc ? structuredClone(duplicateDoc) : null;
       form.reset();
       document.getElementById('monthInput').value = activeMonth;
       document.getElementById('approvalDate').value = defaultApprovalDate();
       document.getElementById('statusInput').value = 'mine';
 
-      if (id) {
+      if (duplicateSourceDoc) {
+        document.getElementById('monthInput').value = monthWithOffset(duplicateSourceDoc.month, 1);
+        document.getElementById('appendixNumber').value = duplicateSourceDoc.applicationNumber;
+        document.getElementById('projectName').value = duplicateSourceDoc.projectName;
+        document.getElementById('counterparty').value = duplicateSourceDoc.counterparty;
+        document.getElementById('internalNumber').value = duplicateSourceDoc.internalNumber || '';
+        document.getElementById('tenderNumber').value = duplicateSourceDoc.tenderNumber || '';
+        document.getElementById('approvalDate').value = duplicateSourceDoc.approvalDate || defaultApprovalDate();
+        document.getElementById('statusInput').value = duplicateSourceDoc.status || 'mine';
+        document.getElementById('commentInput').value = duplicateSourceDoc.comment || '';
+        document.getElementById('modalTitle').textContent = 'Копировать документ';
+        setTimeout(() => {
+          const numberInput = document.getElementById('appendixNumber');
+          numberInput.focus();
+          numberInput.select();
+        }, 0);
+      } else if (id) {
         const doc = documents.find(item => item.id === id);
         if (doc) {
           document.getElementById('docId').value = doc.id;
@@ -723,6 +907,7 @@
 
     function closeModal() {
       editId = null;
+      duplicateSourceDoc = null;
       docModal.classList.remove('open');
       docModal.setAttribute('aria-hidden', 'true');
       form.reset();
@@ -733,9 +918,15 @@
         .filter(doc => doc.month === activeMonth)
         .sort((a, b) => a.projectName.localeCompare(b.projectName, 'ru'));
 
+      projectsMonthCaption.textContent = formatMonthLabel(activeMonth);
       projectsMonthList.innerHTML = docs.length
-        ? docs.map(doc => `<div style="padding:10px 12px;border:1px solid var(--color-border);border-radius:14px;background:white;">${escapeHtml(doc.projectName)}</div>`).join('')
-        : `<div class="empty-state">В этом месяце пока нет проектов.</div>`;
+        ? docs.map(doc => `
+            <div class="project-month-item">
+              <div class="project-month-name">${escapeHtml(doc.projectName)}</div>
+              <div class="project-month-counterparty">${escapeHtml(doc.counterparty || '—')}</div>
+            </div>
+          `).join('')
+        : `<div class="empty-state">В этом месяце пока нет документов.</div>`;
 
       projectsModal.classList.add('open');
       projectsModal.setAttribute('aria-hidden', 'false');
@@ -744,6 +935,30 @@
     function closeProjectsModal() {
       projectsModal.classList.remove('open');
       projectsModal.setAttribute('aria-hidden', 'true');
+    }
+
+    function openDateModal(doc) {
+      quickDateDocId = doc.id;
+      quickApprovalDate.value = doc.approvalDate || defaultApprovalDate();
+      dateModalProject.textContent = doc.projectName;
+      dateModal.classList.add('open');
+      dateModal.setAttribute('aria-hidden', 'false');
+      setTimeout(() => quickApprovalDate.focus(), 0);
+    }
+
+    function closeDateModal() {
+      quickDateDocId = null;
+      dateModal.classList.remove('open');
+      dateModal.setAttribute('aria-hidden', 'true');
+    }
+
+    function saveQuickApprovalDate() {
+      const doc = documents.find(item => item.id === quickDateDocId);
+      if (!doc) return closeDateModal();
+      doc.approvalDate = quickApprovalDate.value || defaultApprovalDate();
+      saveDocuments();
+      closeDateModal();
+      renderDocuments();
     }
 
     function handleSubmit(event) {
@@ -760,7 +975,9 @@
         approvalDate: document.getElementById('approvalDate').value || defaultApprovalDate(),
         status: document.getElementById('statusInput').value,
         comment: document.getElementById('commentInput').value.trim(),
-        inMkt: editId ? (documents.find(item => item.id === editId)?.inMkt ?? false) : false,
+        inMkt: editId
+          ? (documents.find(item => item.id === editId)?.inMkt ?? false)
+          : (duplicateSourceDoc?.inMkt ?? false),
         createdAt: editId ? (documents.find(item => item.id === editId)?.createdAt || new Date().toISOString()) : new Date().toISOString()
       };
 
@@ -799,15 +1016,15 @@
 
       docsList.innerHTML = filtered.map(doc => {
         const deadlineLabel = doc.status === 'review' ? `Согласовать до ${formatApprovalDate(doc.approvalDate || defaultApprovalDate())}` : '';
-        const decisionBadge = (doc.tenderNumber || '').toLowerCase().includes('соглас')
+        const isDecisionPending = (doc.tenderNumber || '').toLowerCase().includes('соглас');
+        const decisionBadge = isDecisionPending
           ? `<span class="decision-alert">Решение на согласовании</span>`
           : '';
 
         const metaParts = [
           `<span>Контрагент: ${escapeHtml(doc.counterparty || '—')}</span>`,
-          `<span>Решение: ${escapeHtml(doc.tenderNumber || '—')}</span>`,
-          `<span>Внутренний номер: ${escapeHtml(doc.internalNumber || '—')}</span>`,
-          doc.comment ? `<span>Комментарий: ${escapeHtml(doc.comment)}</span>` : ''
+          !isDecisionPending ? `<span>Решение: ${escapeHtml(doc.tenderNumber || '—')}</span>` : '',
+          `<span>Внутренний номер: ${escapeHtml(doc.internalNumber || '—')}</span>`
         ].filter(Boolean).join('');
 
         return `
@@ -821,6 +1038,12 @@
                 ${metaParts}
                 ${decisionBadge}
               </div>
+              ${doc.comment ? `
+                <div class="comment-block">
+                  <button class="comment-toggle" type="button" data-action="toggle-comment" aria-expanded="false">Комментарий</button>
+                  <div class="comment-body">${escapeHtml(doc.comment)}</div>
+                </div>
+              ` : ''}
             </div>
             <div class="doc-side">
               <div class="steps-wrap">
@@ -865,15 +1088,7 @@
             const action = button.dataset.action;
 
             if (action === 'duplicate') {
-              const copy = {
-                ...structuredClone(doc),
-                id: crypto.randomUUID(),
-                applicationNumber: `${doc.applicationNumber} (копия)`,
-                createdAt: new Date().toISOString()
-              };
-              documents.unshift(copy);
-              saveDocuments();
-              renderDocuments();
+              openModal(null, doc);
               return;
             }
 
@@ -898,11 +1113,15 @@
             }
 
             if (action === 'edit-date') {
-              const next = prompt('Введите дату согласования в формате ГГГГ-ММ-ДД', doc.approvalDate || defaultApprovalDate());
-              if (next === null) return;
-              doc.approvalDate = next.trim() || defaultApprovalDate();
-              saveDocuments();
-              renderDocuments();
+              openDateModal(doc);
+              return;
+            }
+
+            if (action === 'toggle-comment') {
+              const block = button.closest('.comment-block');
+              if (!block) return;
+              const isOpen = block.classList.toggle('open');
+              button.setAttribute('aria-expanded', String(isOpen));
               return;
             }
 
