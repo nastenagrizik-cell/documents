@@ -3,65 +3,76 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>Трекер согласования документов</title>
+  <title>Документы по согласованию</title>
 
   <link rel="preconnect" href="https://fonts.googleapis.com" />
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
-  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet" />
+  <link
+    href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap"
+    rel="stylesheet"
+  />
 
   <style>
     :root {
-      --bg: #fff8fb;
+      --bg: #fdf7fb;
+      --bg-soft: #fbf2f8;
       --surface: #ffffff;
-      --surface-soft: #fff2f7;
-      --surface-accent: #fce7f1;
-      --surface-border: #efd7e4;
-      --text: #2a1f28;
-      --text-muted: #7e6778;
-      --text-faint: #ad96a6;
+      --surface-alt: #fff7fb;
+      --surface-border: #f0dde7;
 
-      --primary: #d35d8f;
-      --primary-dark: #b44676;
-      --primary-soft: #f9d9e7;
+      --text-main: #2e1827;
+      --text-muted: #7f6476;
+      --text-faint: #b096aa;
 
-      --success-bg: #e8f6eb;
-      --success-border: #c7e5cf;
-      --success: #2f8f4e;
+      --primary: #d14f88;
+      --primary-soft: #f5d0e1;
+      --primary-border: #e1a6c3;
 
-      --warning-bg: #fff4da;
-      --warning-border: #eed9a3;
-      --warning: #9c7707;
+      --status-on-me-bg: #e5f4eb;
+      --status-on-me-border: #b9dec3;
+      --status-on-me-text: #2e7b4c;
 
-      --pending-bg: #f7edf3;
-      --pending-border: #e6d3dd;
-      --pending-text: #7f5d70;
+      --status-approval-bg: #f7e2eb;
+      --status-approval-border: #e3b1c7;
+      --status-approval-text: #a3476b;
 
-      --danger: #c75365;
+      --status-neutral-bg: #f7f1f6;
+      --status-neutral-border: #e0d2df;
+      --status-neutral-text: #756071;
 
-      --shadow-sm: 0 8px 24px rgba(132, 82, 109, 0.08);
-      --shadow-md: 0 18px 44px rgba(132, 82, 109, 0.12);
+      --mkt-bg: #f7edda;
+      --mkt-border: #ddc18e;
+      --mkt-text: #7f6327;
 
-      --radius-sm: 10px;
-      --radius-md: 16px;
-      --radius-lg: 22px;
+      --tag-comment-bg: #e4ecf7;
+      --tag-comment-border: #c0d1ec;
+      --tag-comment-text: #35548a;
 
-      --transition: 180ms cubic-bezier(0.2, 0.8, 0.2, 1);
+      --tag-warning-bg: #fce5e9;
+      --tag-warning-border: #f0bac3;
+      --tag-warning-text: #b14457;
+
+      --success-bg: #e6f5ea;
+      --success-border: #c5e2ce;
+
+      --shadow-card: 0 18px 40px rgba(120, 75, 105, 0.16);
+      --radius-card: 30px;
+      --radius-pill: 999px;
+      --transition: 180ms cubic-bezier(0.2, 0.8, 0.25, 1);
     }
 
     * {
       box-sizing: border-box;
     }
 
-    html, body {
+    html,
+    body {
       margin: 0;
       padding: 0;
-      background: linear-gradient(180deg, #fff8fb 0%, #fffafc 100%);
-      color: var(--text);
-      font-family: 'Inter', system-ui, -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
-    }
-
-    body {
       min-height: 100vh;
+      font-family: 'Inter', system-ui, -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+      color: var(--text-main);
+      background: radial-gradient(circle at top left, #fef1f7 0, #fff9fb 40%, #f9f2f8 100%);
     }
 
     button,
@@ -74,16 +85,15 @@
     .app {
       max-width: 1120px;
       margin: 0 auto;
-      padding: 24px 16px 48px;
+      padding: 24px 20px 40px;
     }
 
     .topbar {
       position: sticky;
       top: 0;
-      z-index: 40;
-      margin-bottom: 18px;
-      padding-top: 8px;
-      backdrop-filter: blur(14px);
+      z-index: 20;
+      padding-bottom: 16px;
+      backdrop-filter: blur(12px);
     }
 
     .topbar-inner {
@@ -91,11 +101,11 @@
       align-items: center;
       justify-content: space-between;
       gap: 16px;
-      padding: 14px 16px;
-      background: rgba(255, 250, 252, 0.82);
-      border: 1px solid rgba(239, 215, 228, 0.8);
-      border-radius: 20px;
-      box-shadow: var(--shadow-sm);
+      padding: 14px 18px;
+      background: rgba(255, 250, 252, 0.92);
+      border-radius: 22px;
+      border: 1px solid rgba(240, 221, 231, 0.9);
+      box-shadow: 0 18px 40px rgba(137, 87, 115, 0.16);
     }
 
     .brand {
@@ -119,51 +129,47 @@
     .controls {
       display: flex;
       align-items: center;
-      justify-content: flex-end;
-      gap: 10px;
+      gap: 12px;
       flex-wrap: wrap;
+      justify-content: flex-end;
     }
 
     .month-switcher {
       display: inline-flex;
       align-items: center;
       gap: 8px;
-      padding: 6px;
+      padding: 4px;
       background: var(--surface);
-      border: 1px solid var(--surface-border);
       border-radius: 999px;
-    }
-
-    .icon-btn,
-    .add-btn {
-      border: 0;
-      cursor: pointer;
-      transition: transform var(--transition), background var(--transition), box-shadow var(--transition), opacity var(--transition);
+      border: 1px solid var(--surface-border);
     }
 
     .icon-btn {
-      width: 38px;
-      height: 38px;
+      width: 34px;
+      height: 34px;
       border-radius: 999px;
-      background: var(--surface-soft);
-      color: var(--text);
+      border: none;
+      background: var(--bg-soft);
+      color: var(--text-main);
       display: inline-flex;
       align-items: center;
       justify-content: center;
+      cursor: pointer;
       font-size: 18px;
+      transition: all var(--transition);
     }
 
-    .icon-btn:hover,
-    .add-btn:hover {
+    .icon-btn:hover {
       transform: translateY(-1px);
+      background: #f5e7f0;
     }
 
     .month-label {
-      min-width: 132px;
+      min-width: 140px;
       text-align: center;
       font-size: 14px;
       font-weight: 700;
-      color: var(--text);
+      color: var(--text-main);
     }
 
     .filters {
@@ -174,64 +180,68 @@
     }
 
     .chip {
-      padding: 9px 12px;
-      border-radius: 999px;
+      padding: 8px 12px;
+      border-radius: var(--radius-pill);
       border: 1px solid var(--surface-border);
       background: var(--surface);
-      color: var(--text-muted);
-      font-size: 13px;
+      font-size: 12px;
       font-weight: 600;
+      color: var(--text-muted);
       cursor: pointer;
       transition: all var(--transition);
       white-space: nowrap;
     }
 
     .chip.active {
-      background: var(--surface-accent);
-      color: var(--primary-dark);
-      border-color: #e7b6cb;
-      box-shadow: inset 0 0 0 1px rgba(211, 93, 143, 0.08);
+      background: var(--primary-soft);
+      color: var(--primary);
+      border-color: var(--primary-border);
     }
 
     .add-btn {
-      width: 42px;
-      height: 42px;
-      border-radius: 999px;
+      width: 40px;
+      height: 40px;
+      border-radius: var(--radius-pill);
+      border: none;
       background: var(--primary);
-      color: #fff;
+      color: white;
       display: inline-flex;
       align-items: center;
       justify-content: center;
-      box-shadow: 0 12px 28px rgba(211, 93, 143, 0.28);
       font-size: 24px;
-      line-height: 1;
+      cursor: pointer;
+      box-shadow: 0 12px 30px rgba(209, 79, 136, 0.4);
+      transition: all var(--transition);
+    }
+
+    .add-btn:hover {
+      transform: translateY(-1px);
     }
 
     .summary {
       display: grid;
       grid-template-columns: repeat(4, minmax(0, 1fr));
       gap: 12px;
-      margin-bottom: 18px;
+      margin: 12px 0 18px;
     }
 
     .summary-card {
       background: var(--surface);
-      border: 1px solid var(--surface-border);
       border-radius: 18px;
-      padding: 14px 16px;
-      box-shadow: var(--shadow-sm);
+      border: 1px solid var(--surface-border);
+      padding: 12px 14px;
     }
 
     .summary-label {
       font-size: 12px;
       color: var(--text-muted);
-      margin-bottom: 6px;
+      margin-bottom: 4px;
     }
 
     .summary-value {
-      font-size: 22px;
+      font-size: 19px;
       font-weight: 800;
-      letter-spacing: -0.04em;
+      letter-spacing: -0.03em;
     }
 
     .list {
@@ -241,16 +251,15 @@
 
     .doc-card {
       background: var(--surface);
+      border-radius: var(--radius-card);
       border: 1px solid var(--surface-border);
-      border-radius: 20px;
-      padding: 14px 16px 14px;
-      box-shadow: var(--shadow-sm);
-      transition: transform var(--transition), box-shadow var(--transition), border-color var(--transition), background var(--transition);
-    }
-
-    .doc-card:hover {
-      transform: translateY(-1px);
-      box-shadow: var(--shadow-md);
+      padding: 16px 18px 14px;
+      box-shadow: var(--shadow-card);
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 16px;
+      transition: transform var(--transition), box-shadow var(--transition), background var(--transition), border-color var(--transition);
     }
 
     .doc-card.approved {
@@ -258,20 +267,12 @@
       border-color: var(--success-border);
     }
 
-    .doc-head {
-      display: flex;
-      align-items: flex-start;
-      justify-content: space-between;
-      gap: 16px;
-      margin-bottom: 10px;
-    }
-
     .doc-main {
-      min-width: 0;
       flex: 1;
+      min-width: 0;
     }
 
-    .doc-title {
+    .doc-title-row {
       display: flex;
       align-items: baseline;
       gap: 10px;
@@ -283,7 +284,7 @@
       font-size: 18px;
       font-weight: 800;
       letter-spacing: -0.03em;
-      color: var(--text);
+      color: var(--primary);
       white-space: nowrap;
     }
 
@@ -291,131 +292,204 @@
       font-size: 17px;
       font-weight: 700;
       letter-spacing: -0.03em;
-      color: var(--text);
+      color: var(--text-main);
       min-width: 0;
       word-break: break-word;
     }
 
     .doc-meta {
+      margin-top: 6px;
+      font-size: 12px;
+      color: var(--text-muted);
       display: flex;
       flex-wrap: wrap;
       gap: 8px 14px;
-      color: var(--text-muted);
-      font-size: 12px;
-      line-height: 1.45;
-      margin-top: 6px;
     }
 
     .doc-meta span {
-      opacity: 0.95;
+      white-space: nowrap;
     }
 
-    .doc-actions {
-      display: inline-flex;
-      align-items: center;
-      gap: 8px;
-      flex-shrink: 0;
+    .doc-meta span strong {
+      font-weight: 600;
+      color: var(--text-main);
     }
 
-    .text-btn {
-      border: 1px solid var(--surface-border);
-      background: var(--surface);
-      color: var(--text-muted);
-      border-radius: 12px;
-      padding: 8px 10px;
-      cursor: pointer;
-      font-size: 12px;
-      font-weight: 700;
-      transition: all var(--transition);
-    }
-
-    .text-btn:hover {
-      color: var(--text);
-      border-color: #ddbccd;
-    }
-
-    .text-btn.danger:hover {
-      color: var(--danger);
-      border-color: rgba(199, 83, 101, 0.28);
-    }
-
-    .status-wrap {
+    .doc-tags {
+      margin-top: 8px;
       display: flex;
-      flex-direction: column;
+      flex-wrap: wrap;
       gap: 6px;
     }
 
+    .tag-comment {
+      padding: 6px 10px;
+      border-radius: var(--radius-pill);
+      border: 1px solid var(--tag-comment-border);
+      background: var(--tag-comment-bg);
+      font-size: 12px;
+      font-weight: 600;
+      color: var(--tag-comment-text);
+    }
+
+    .tag-warning {
+      padding: 6px 10px;
+      border-radius: var(--radius-pill);
+      border: 1px solid var(--tag-warning-border);
+      background: var(--tag-warning-bg);
+      font-size: 12px;
+      font-weight: 600;
+      color: var(--tag-warning-text);
+    }
+
+    .doc-right {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      flex-wrap: nowrap;
+    }
+
     .status-row {
-      display: grid;
-      grid-template-columns: repeat(3, minmax(0, 1fr));
+      display: inline-flex;
+      align-items: center;
       gap: 8px;
+      flex-wrap: nowrap;
     }
 
     .status-pill {
-      position: relative;
-      border: 1px solid var(--pending-border);
-      background: var(--pending-bg);
-      color: var(--pending-text);
-      border-radius: 999px;
-      padding: 10px 12px;
+      border-radius: var(--radius-pill);
+      padding: 9px 14px;
+      border: 1px solid var(--status-neutral-border);
+      background: var(--status-neutral-bg);
       font-size: 12px;
       font-weight: 700;
-      text-align: center;
+      color: var(--status-neutral-text);
       cursor: pointer;
-      transition: all var(--transition);
       user-select: none;
+      transition: all var(--transition);
+      white-space: nowrap;
     }
 
     .status-pill:hover {
-      border-color: #dcbacb;
       transform: translateY(-1px);
     }
 
-    .status-pill.done {
-      background: rgba(90, 176, 116, 0.14);
-      border-color: rgba(90, 176, 116, 0.3);
-      color: var(--success);
+    .status-pill.on-me {
+      background: var(--status-on-me-bg);
+      border-color: var(--status-on-me-border);
+      color: var(--status-on-me-text);
     }
 
-    .status-pill.current {
-      background: var(--surface-accent);
-      border-color: #e6bdd0;
-      color: var(--primary-dark);
-      box-shadow: inset 0 0 0 1px rgba(211, 93, 143, 0.08);
+    .status-pill.approval {
+      background: var(--status-approval-bg);
+      border-color: var(--status-approval-border);
+      color: var(--status-approval-text);
     }
 
-    .approval-date {
-      min-height: 18px;
+    .status-pill.approved {
+      background: var(--success-bg);
+      border-color: var(--success-border);
+      color: #2f7c48;
+    }
+
+    .status-pill.inactive {
+      opacity: 0.7;
+    }
+
+    .approval-deadline {
       font-size: 12px;
-      color: var(--text-muted);
-      padding-left: 4px;
+      font-weight: 700;
+      color: var(--status-approval-text);
+      text-align: center;
+      margin-bottom: 4px;
     }
 
-    .comment {
-      margin-top: 10px;
+    .mkt-pill {
+      border-radius: var(--radius-pill);
+      padding: 8px 12px;
+      border: 1px solid var(--mkt-border);
+      background: var(--mkt-bg);
+      color: var(--mkt-text);
+      font-size: 12px;
+      font-weight: 700;
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+      cursor: pointer;
+      transition: all var(--transition);
+    }
+
+    .mkt-pill span.icon {
       font-size: 13px;
+    }
+
+    .mkt-pill.active {
+      background: #f0e0c0;
+      border-color: #cfa96a;
+    }
+
+    .icon-actions {
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+    }
+
+    .icon-round-btn {
+      width: 32px;
+      height: 32px;
+      border-radius: var(--radius-pill);
+      border: 1px solid var(--surface-border);
+      background: var(--surface-alt);
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      cursor: pointer;
+      font-size: 14px;
       color: var(--text-muted);
-      background: rgba(255,255,255,0.52);
-      border: 1px dashed rgba(214, 183, 198, 0.8);
-      padding: 10px 12px;
-      border-radius: 14px;
+      transition: all var(--transition);
+    }
+
+    .icon-round-btn:hover {
+      background: #f4e5f0;
+      border-color: #e0cede;
+      color: var(--text-main);
+      transform: translateY(-1px);
+    }
+
+    .loading,
+    .empty,
+    .error {
+      margin-top: 16px;
+      font-size: 14px;
+    }
+
+    .loading {
+      color: var(--text-muted);
     }
 
     .empty {
-      padding: 42px 20px;
+      padding: 32px 18px;
       text-align: center;
       background: var(--surface);
-      border: 1px solid var(--surface-border);
       border-radius: 24px;
+      border: 1px dashed var(--surface-border);
       color: var(--text-muted);
-      box-shadow: var(--shadow-sm);
     }
 
     .empty strong {
       display: block;
-      font-size: 17px;
-      color: var(--text);
-      margin-bottom: 8px;
+      font-size: 16px;
+      color: var(--text-main);
+      margin-bottom: 6px;
+    }
+
+    .error {
+      margin-bottom: 14px;
+      padding: 10px 12px;
+      border-radius: 16px;
+      background: #ffeef1;
+      border: 1px solid #f2c0cd;
+      color: #b34159;
     }
 
     .modal {
@@ -425,9 +499,9 @@
       align-items: center;
       justify-content: center;
       padding: 20px;
-      background: rgba(65, 36, 52, 0.28);
-      backdrop-filter: blur(10px);
-      z-index: 100;
+      background: rgba(74, 41, 61, 0.26);
+      backdrop-filter: blur(12px);
+      z-index: 50;
     }
 
     .modal.open {
@@ -435,13 +509,13 @@
     }
 
     .modal-card {
-      width: min(760px, 100%);
-      max-height: min(90vh, 920px);
+      width: min(780px, 100%);
+      max-height: min(92vh, 920px);
       overflow: auto;
-      background: #fffafc;
-      border: 1px solid #efd6e3;
-      border-radius: 24px;
-      box-shadow: 0 30px 70px rgba(102, 59, 80, 0.22);
+      background: #fff9fc;
+      border-radius: 22px;
+      border: 1px solid #f1dbe7;
+      box-shadow: 0 28px 60px rgba(112, 69, 95, 0.26);
       padding: 20px;
     }
 
@@ -450,31 +524,29 @@
       align-items: flex-start;
       justify-content: space-between;
       gap: 16px;
-      margin-bottom: 16px;
+      margin-bottom: 14px;
     }
 
     .modal-title {
-      font-size: 22px;
+      font-size: 20px;
       font-weight: 800;
-      letter-spacing: -0.04em;
-      margin-bottom: 6px;
+      letter-spacing: -0.03em;
+      margin-bottom: 4px;
     }
 
     .modal-subtitle {
+      font-size: 12px;
       color: var(--text-muted);
-      font-size: 13px;
-      line-height: 1.5;
     }
 
     .close-btn {
-      width: 38px;
-      height: 38px;
-      border-radius: 999px;
-      border: 0;
-      background: var(--surface-soft);
+      width: 34px;
+      height: 34px;
+      border-radius: var(--radius-pill);
+      border: none;
+      background: var(--bg-soft);
       cursor: pointer;
       font-size: 18px;
-      color: var(--text);
     }
 
     .form-grid {
@@ -486,7 +558,7 @@
     .field {
       display: flex;
       flex-direction: column;
-      gap: 8px;
+      gap: 6px;
     }
 
     .field.full {
@@ -496,60 +568,69 @@
     .field label {
       font-size: 12px;
       color: var(--text-muted);
-      font-weight: 700;
+      font-weight: 600;
     }
 
     .field input,
     .field select,
     .field textarea {
-      width: 100%;
-      border: 1px solid #e8d3de;
-      background: #ffffff;
-      color: var(--text);
       border-radius: 14px;
-      padding: 12px 14px;
+      border: 1px solid #e7d4e1;
+      background: #ffffff;
+      padding: 10px 12px;
+      font-size: 13px;
+      color: var(--text-main);
       outline: none;
-      transition: border-color var(--transition), box-shadow var(--transition), background var(--transition);
+      transition: all var(--transition);
     }
 
     .field textarea {
-      min-height: 96px;
+      min-height: 90px;
       resize: vertical;
     }
 
     .field input:focus,
     .field select:focus,
     .field textarea:focus {
-      border-color: #d98db0;
-      box-shadow: 0 0 0 4px rgba(211, 93, 143, 0.12);
+      border-color: #d38db1;
+      box-shadow: 0 0 0 3px rgba(211, 79, 136, 0.16);
+    }
+
+    .checkbox-row {
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+      font-size: 13px;
+      color: var(--text-muted);
     }
 
     .modal-actions {
       display: flex;
       justify-content: flex-end;
       gap: 10px;
-      margin-top: 18px;
+      margin-top: 16px;
     }
 
     .secondary-btn,
     .primary-btn {
-      border: 0;
       border-radius: 14px;
-      padding: 12px 16px;
-      cursor: pointer;
+      border: none;
+      padding: 10px 14px;
+      font-size: 13px;
       font-weight: 700;
+      cursor: pointer;
       transition: all var(--transition);
     }
 
     .secondary-btn {
-      background: #f5eaf0;
-      color: var(--text);
+      background: #f3e5f0;
+      color: var(--text-main);
     }
 
     .primary-btn {
       background: var(--primary);
       color: white;
-      box-shadow: 0 12px 24px rgba(211, 93, 143, 0.22);
+      box-shadow: 0 12px 26px rgba(209, 79, 136, 0.32);
     }
 
     .secondary-btn:hover,
@@ -557,41 +638,31 @@
       transform: translateY(-1px);
     }
 
-    .loading {
-      padding: 22px 12px;
-      color: var(--text-muted);
-      font-size: 14px;
-    }
-
-    .error {
-      margin-bottom: 14px;
-      padding: 12px 14px;
-      border-radius: 14px;
-      background: #fff0f2;
-      border: 1px solid #f1c7d0;
-      color: #9f4358;
-      font-size: 13px;
-      line-height: 1.45;
-    }
-
     @media (max-width: 900px) {
       .summary {
         grid-template-columns: repeat(2, minmax(0, 1fr));
       }
 
-      .form-grid {
-        grid-template-columns: 1fr;
+      .doc-card {
+        flex-direction: column;
+        align-items: flex-start;
+      }
+
+      .doc-right {
+        width: 100%;
+        justify-content: space-between;
+        flex-wrap: wrap;
       }
     }
 
     @media (max-width: 720px) {
       .app {
-        padding: 16px 12px 32px;
+        padding: 16px 12px 30px;
       }
 
       .topbar-inner {
-        align-items: flex-start;
         flex-direction: column;
+        align-items: flex-start;
       }
 
       .controls {
@@ -599,29 +670,23 @@
         justify-content: space-between;
       }
 
-      .filters {
-        width: 100%;
-      }
-
       .summary {
         grid-template-columns: 1fr 1fr;
       }
 
-      .doc-head {
-        flex-direction: column;
-      }
-
-      .doc-actions {
-        width: 100%;
-        justify-content: flex-end;
-      }
-
-      .status-row {
+      .form-grid {
         grid-template-columns: 1fr;
       }
 
-      .month-label {
-        min-width: 112px;
+      .doc-right {
+        flex-direction: column;
+        align-items: flex-end;
+      }
+
+      .status-row {
+        width: 100%;
+        justify-content: flex-end;
+        flex-wrap: wrap;
       }
     }
 
@@ -632,7 +697,6 @@
 
       .modal-card {
         padding: 16px;
-        border-radius: 20px;
       }
 
       .modal-actions {
@@ -652,7 +716,9 @@
       <div class="topbar-inner">
         <div class="brand">
           <div class="brand-title">Документы по согласованию</div>
-          <div class="brand-subtitle">Компактный трекер по месяцам со статусами и датой согласования</div>
+          <div class="brand-subtitle">
+            Компактный трекер по месяцам с этапами, МКТ и датами согласования
+          </div>
         </div>
 
         <div class="controls">
@@ -701,12 +767,18 @@
 
           <div class="field">
             <label for="appendixInput">Номер приложения</label>
-            <input id="appendixInput" name="appendixNumber" type="text" placeholder="Например, Приложение 12" required />
+            <input id="appendixInput" name="appendixNumber" type="text" placeholder="Например, 156" required />
           </div>
 
           <div class="field full">
             <label for="projectInput">Название проекта / суть приложения</label>
-            <input id="projectInput" name="projectName" type="text" placeholder="Например, Согласование поставки" required />
+            <input
+              id="projectInput"
+              name="projectName"
+              type="text"
+              placeholder="Например, продуктовые тесты"
+              required
+            />
           </div>
 
           <div class="field">
@@ -721,7 +793,12 @@
 
           <div class="field">
             <label for="tenderInput">Номер тендерного решения</label>
-            <input id="tenderInput" name="tenderNumber" type="text" placeholder="Например, ТР-425" />
+            <input
+              id="tenderInput"
+              name="tenderNumber"
+              type="text"
+              placeholder="Например, ТР-00949 или «на согласовании»"
+            />
           </div>
 
           <div class="field">
@@ -734,524 +811,23 @@
           </div>
 
           <div class="field">
-            <label for="approvalDateInput">Дата согласования</label>
+            <label for="approvalDateInput">Дата согласования (если известна)</label>
             <input id="approvalDateInput" name="approvalDate" type="date" />
+          </div>
+
+          <div class="field">
+            <label for="approvalDeadlineInput">Срок согласования</label>
+            <input id="approvalDeadlineInput" name="approvalDeadline" type="date" />
+          </div>
+
+          <div class="field">
+            <label>МКТ</label>
+            <label class="checkbox-row">
+              <input id="inMktInput" type="checkbox" /> <span>Отправлено / относится к МКТ</span>
+            </label>
           </div>
 
           <div class="field full">
             <label for="commentInput">Комментарий</label>
-            <textarea id="commentInput" name="comment" placeholder="Например: отправлено юристам / ждём подпись / у контрагента на проверке"></textarea>
-          </div>
-        </div>
-
-        <div class="modal-actions">
-          <button class="secondary-btn" id="cancelBtn" type="button">Отмена</button>
-          <button class="primary-btn" type="submit" id="saveBtn">Сохранить</button>
-        </div>
-      </form>
-    </div>
-  </div>
-
-  <script>
-    const STAGES = [
-      { key: 0, label: 'На мне' },
-      { key: 1, label: 'На согласовании' },
-      { key: 2, label: 'Согласовано' }
-    ];
-
-    const state = {
-      documents: [],
-      selectedMonth: getCurrentMonthValue(),
-      filter: 'all',
-      isLoading: true,
-      editingId: null
-    };
-
-    const monthLabel = document.getElementById('monthLabel');
-    const prevMonthBtn = document.getElementById('prevMonthBtn');
-    const nextMonthBtn = document.getElementById('nextMonthBtn');
-    const filters = document.getElementById('filters');
-    const summary = document.getElementById('summary');
-    const documentsList = document.getElementById('documentsList');
-    const loadingBox = document.getElementById('loadingBox');
-    const errorBox = document.getElementById('errorBox');
-
-    const modal = document.getElementById('modal');
-    const modalTitle = document.getElementById('modalTitle');
-    const openCreateBtn = document.getElementById('openCreateBtn');
-    const closeModalBtn = document.getElementById('closeModalBtn');
-    const cancelBtn = document.getElementById('cancelBtn');
-    const docForm = document.getElementById('docForm');
-
-    const monthInput = document.getElementById('monthInput');
-    const appendixInput = document.getElementById('appendixInput');
-    const projectInput = document.getElementById('projectInput');
-    const counterpartyInput = document.getElementById('counterpartyInput');
-    const internalInput = document.getElementById('internalInput');
-    const tenderInput = document.getElementById('tenderInput');
-    const stageInput = document.getElementById('stageInput');
-    const approvalDateInput = document.getElementById('approvalDateInput');
-    const commentInput = document.getElementById('commentInput');
-
-    function getCurrentMonthValue() {
-      const now = new Date();
-      const month = `${now.getMonth() + 1}`.padStart(2, '0');
-      return `${now.getFullYear()}-${month}`;
-    }
-
-    function formatMonthLabel(monthValue) {
-      const [year, month] = monthValue.split('-').map(Number);
-      const date = new Date(year, month - 1, 1);
-      return new Intl.DateTimeFormat('ru-RU', { month: 'long', year: 'numeric' }).format(date);
-    }
-
-    function shiftMonth(monthValue, diff) {
-      const [year, month] = monthValue.split('-').map(Number);
-      const date = new Date(year, month - 1 + diff, 1);
-      return `${date.getFullYear()}-${String(date.getMonth() + 1).padStart(2, '0')}`;
-    }
-
-    function formatApprovalDate(value) {
-      if (!value) return '';
-      const date = typeof value === 'string' ? new Date(value) : value;
-      if (Number.isNaN(date.getTime())) return '';
-      return new Intl.DateTimeFormat('ru-RU', {
-        day: '2-digit',
-        month: '2-digit',
-        year: 'numeric'
-      }).format(date);
-    }
-
-    function dateToInputValue(value) {
-      if (!value) return '';
-      const date = typeof value === 'string' ? new Date(value) : value;
-      if (Number.isNaN(date.getTime())) return '';
-      return date.toISOString().slice(0, 10);
-    }
-
-    function normalizeDoc(row) {
-      return {
-        id: row.id,
-        month: row.month,
-        appendixNumber: row.appendixNumber || '',
-        projectName: row.projectName || '',
-        counterparty: row.counterparty || '',
-        internalNumber: row.internalNumber || '',
-        tenderNumber: row.tenderNumber || '',
-        stage: Number(row.stage || 0),
-        inMkt: Boolean(row.inMkt),
-        comment: row.comment || '',
-        approvalDeadline: row.approvalDeadline || null,
-        approvalDate: row.approvalDate || null
-      };
-    }
-
-    function renderError(message = '') {
-      errorBox.innerHTML = message
-        ? `<div class="error">${message}</div>`
-        : '';
-    }
-
-    function getVisibleDocuments() {
-      let docs = state.documents.filter(doc => doc.month === state.selectedMonth);
-
-      if (state.filter === 'active') {
-        docs = docs.filter(doc => doc.stage < 2);
-      }
-
-      if (state.filter === 'approved') {
-        docs = docs.filter(doc => doc.stage === 2);
-      }
-
-      docs.sort((a, b) => {
-        if (a.stage !== b.stage) return a.stage - b.stage;
-        return (a.appendixNumber || '').localeCompare(b.appendixNumber || '', 'ru');
-      });
-
-      return docs;
-    }
-
-    function renderSummary(monthDocs) {
-      const total = monthDocs.length;
-      const onMe = monthDocs.filter(doc => doc.stage === 0).length;
-      const inApproval = monthDocs.filter(doc => doc.stage === 1).length;
-      const approved = monthDocs.filter(doc => doc.stage === 2).length;
-
-      summary.innerHTML = `
-        <div class="summary-card">
-          <div class="summary-label">Всего документов</div>
-          <div class="summary-value">${total}</div>
-        </div>
-        <div class="summary-card">
-          <div class="summary-label">На мне</div>
-          <div class="summary-value">${onMe}</div>
-        </div>
-        <div class="summary-card">
-          <div class="summary-label">На согласовании</div>
-          <div class="summary-value">${inApproval}</div>
-        </div>
-        <div class="summary-card">
-          <div class="summary-label">Согласовано</div>
-          <div class="summary-value">${approved}</div>
-        </div>
-      `;
-    }
-
-    function renderDocuments() {
-      monthLabel.textContent = formatMonthLabel(state.selectedMonth);
-      Array.from(filters.querySelectorAll('.chip')).forEach(btn => {
-        btn.classList.toggle('active', btn.dataset.filter === state.filter);
-      });
-
-      const monthDocs = state.documents.filter(doc => doc.month === state.selectedMonth);
-      renderSummary(monthDocs);
-
-      const visibleDocs = getVisibleDocuments();
-
-      if (state.isLoading) {
-        loadingBox.hidden = false;
-        documentsList.hidden = true;
-        return;
-      }
-
-      loadingBox.hidden = true;
-      documentsList.hidden = false;
-
-      if (!visibleDocs.length) {
-        documentsList.innerHTML = `
-          <div class="empty">
-            <strong>В этом месяце пока нет документов</strong>
-            Добавь первый документ по кнопке с плюсом или переключись на другой месяц.
-          </div>
-        `;
-        return;
-      }
-
-      documentsList.innerHTML = '';
-
-      visibleDocs.forEach(doc => {
-        const card = document.createElement('article');
-        card.className = `doc-card ${doc.stage === 2 ? 'approved' : ''}`;
-
-        const head = document.createElement('div');
-        head.className = 'doc-head';
-
-        const main = document.createElement('div');
-        main.className = 'doc-main';
-
-        const title = document.createElement('div');
-        title.className = 'doc-title';
-        title.innerHTML = `
-          <span class="doc-appendix">${escapeHtml(doc.appendixNumber || 'Без номера')}</span>
-          <span class="doc-project">${escapeHtml(doc.projectName || '')}</span>
-        `;
-
-        const meta = document.createElement('div');
-        meta.className = 'doc-meta';
-        meta.innerHTML = `
-          <span>Контрагент: ${escapeHtml(doc.counterparty || '—')}</span>
-          <span>Тендерное решение: ${escapeHtml(doc.tenderNumber || '—')}</span>
-          <span>Внутренний номер: ${escapeHtml(doc.internalNumber || '—')}</span>
-        `;
-
-        main.appendChild(title);
-        main.appendChild(meta);
-
-        const actions = document.createElement('div');
-        actions.className = 'doc-actions';
-
-        const editBtn = document.createElement('button');
-        editBtn.className = 'text-btn';
-        editBtn.type = 'button';
-        editBtn.textContent = 'Редактировать';
-        editBtn.addEventListener('click', () => openEditModal(doc));
-
-        const deleteBtn = document.createElement('button');
-        deleteBtn.className = 'text-btn danger';
-        deleteBtn.type = 'button';
-        deleteBtn.textContent = 'Удалить';
-        deleteBtn.addEventListener('click', () => removeDocument(doc.id));
-
-        actions.appendChild(editBtn);
-        actions.appendChild(deleteBtn);
-
-        head.appendChild(main);
-        head.appendChild(actions);
-
-        const statusWrap = document.createElement('div');
-        statusWrap.className = 'status-wrap';
-
-        const statusRow = document.createElement('div');
-        statusRow.className = 'status-row';
-
-        STAGES.forEach(stage => {
-          const pill = document.createElement('button');
-          pill.type = 'button';
-          pill.className = 'status-pill';
-
-          if (doc.stage > stage.key) {
-            pill.classList.add('done');
-          } else if (doc.stage === stage.key) {
-            pill.classList.add('current');
-          }
-
-          pill.textContent = stage.label;
-          pill.addEventListener('click', () => updateStage(doc, stage.key));
-          statusRow.appendChild(pill);
-        });
-
-        const approvalDate = document.createElement('div');
-        approvalDate.className = 'approval-date';
-
-        if (doc.stage === 1 && !doc.approvalDate) {
-          approvalDate.textContent = 'Сейчас документ на согласовании';
-        } else if (doc.approvalDate) {
-          approvalDate.textContent = `Дата согласования: ${formatApprovalDate(doc.approvalDate)}`;
-        } else {
-          approvalDate.textContent = '';
-        }
-
-        statusWrap.appendChild(statusRow);
-        statusWrap.appendChild(approvalDate);
-
-        card.appendChild(head);
-        card.appendChild(statusWrap);
-
-        if (doc.comment) {
-          const comment = document.createElement('div');
-          comment.className = 'comment';
-          comment.textContent = doc.comment;
-          card.appendChild(comment);
-        }
-
-        documentsList.appendChild(card);
-      });
-    }
-
-    function openCreateModal() {
-      state.editingId = null;
-      modalTitle.textContent = 'Новый документ';
-      docForm.reset();
-      monthInput.value = state.selectedMonth;
-      stageInput.value = '0';
-      approvalDateInput.value = '';
-      openModal();
-    }
-
-    function openEditModal(doc) {
-      state.editingId = doc.id;
-      modalTitle.textContent = 'Редактирование документа';
-
-      monthInput.value = doc.month || state.selectedMonth;
-      appendixInput.value = doc.appendixNumber || '';
-      projectInput.value = doc.projectName || '';
-      counterpartyInput.value = doc.counterparty || '';
-      internalInput.value = doc.internalNumber || '';
-      tenderInput.value = doc.tenderNumber || '';
-      stageInput.value = String(doc.stage ?? 0);
-      approvalDateInput.value = dateToInputValue(doc.approvalDate);
-      commentInput.value = doc.comment || '';
-
-      openModal();
-    }
-
-    function openModal() {
-      modal.classList.add('open');
-    }
-
-    function closeModal() {
-      modal.classList.remove('open');
-    }
-
-    async function fetchDocuments() {
-      state.isLoading = true;
-      renderDocuments();
-      renderError('');
-
-      try {
-        const response = await fetch('/api/documents');
-        if (!response.ok) {
-          throw new Error('Не удалось загрузить документы');
-        }
-        const data = await response.json();
-        state.documents = data.map(normalizeDoc);
-      } catch (error) {
-        renderError(error.message || 'Ошибка загрузки');
-      } finally {
-        state.isLoading = false;
-        renderDocuments();
-      }
-    }
-
-    async function saveDocument(doc) {
-      const payload = {
-        ...doc,
-        approvalDate: doc.approvalDate || null,
-        approvalDeadline: doc.approvalDeadline || null
-      };
-
-      const response = await fetch('/api/documents', {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify(payload)
-      });
-
-      if (!response.ok) {
-        const err = await response.json().catch(() => ({}));
-        throw new Error(err.error || 'Не удалось сохранить документ');
-      }
-
-      const saved = normalizeDoc(await response.json());
-      const index = state.documents.findIndex(item => item.id === saved.id);
-
-      if (index >= 0) {
-        state.documents[index] = saved;
-      } else {
-        state.documents.push(saved);
-      }
-
-      renderDocuments();
-    }
-
-    async function removeDocument(id) {
-      const confirmed = window.confirm('Удалить документ?');
-      if (!confirmed) return;
-
-      renderError('');
-
-      try {
-        const response = await fetch(`/api/documents/${id}`, { method: 'DELETE' });
-        if (!response.ok) {
-          throw new Error('Не удалось удалить документ');
-        }
-
-        state.documents = state.documents.filter(doc => doc.id !== id);
-        renderDocuments();
-      } catch (error) {
-        renderError(error.message || 'Ошибка удаления');
-      }
-    }
-
-    async function updateStage(doc, newStage) {
-      renderError('');
-
-      const updatedDoc = { ...doc, stage: newStage };
-
-      if (newStage === 2 && !updatedDoc.approvalDate) {
-        updatedDoc.approvalDate = new Date().toISOString();
-      }
-
-      if (newStage < 2) {
-        updatedDoc.approvalDate = null;
-      }
-
-      const previousDocs = [...state.documents];
-      state.documents = state.documents.map(item => item.id === doc.id ? updatedDoc : item);
-      renderDocuments();
-
-      try {
-        await saveDocument(updatedDoc);
-      } catch (error) {
-        state.documents = previousDocs;
-        renderDocuments();
-        renderError(error.message || 'Не удалось обновить этап');
-      }
-    }
-
-    function buildDocumentFromForm() {
-      const stage = Number(stageInput.value || 0);
-      const approvalDateValue = approvalDateInput.value ? new Date(approvalDateInput.value).toISOString() : null;
-
-      let approvalDate = approvalDateValue;
-      if (stage === 2 && !approvalDate) {
-        approvalDate = new Date().toISOString();
-      }
-      if (stage < 2 && approvalDate) {
-        approvalDate = null;
-      }
-
-      return {
-        id: state.editingId || crypto.randomUUID(),
-        month: monthInput.value,
-        appendixNumber: appendixInput.value.trim(),
-        projectName: projectInput.value.trim(),
-        counterparty: counterpartyInput.value.trim(),
-        internalNumber: internalInput.value.trim(),
-        tenderNumber: tenderInput.value.trim(),
-        stage,
-        inMkt: false,
-        comment: commentInput.value.trim(),
-        approvalDeadline: null,
-        approvalDate
-      };
-    }
-
-    function escapeHtml(value) {
-      return String(value)
-        .replaceAll('&', '&amp;')
-        .replaceAll('<', '&lt;')
-        .replaceAll('>', '&gt;')
-        .replaceAll('"', '&quot;')
-        .replaceAll("'", '&#039;');
-    }
-
-    prevMonthBtn.addEventListener('click', () => {
-      state.selectedMonth = shiftMonth(state.selectedMonth, -1);
-      renderDocuments();
-    });
-
-    nextMonthBtn.addEventListener('click', () => {
-      state.selectedMonth = shiftMonth(state.selectedMonth, 1);
-      renderDocuments();
-    });
-
-    filters.addEventListener('click', event => {
-      const btn = event.target.closest('.chip');
-      if (!btn) return;
-      state.filter = btn.dataset.filter;
-      renderDocuments();
-    });
-
-    openCreateBtn.addEventListener('click', openCreateModal);
-    closeModalBtn.addEventListener('click', closeModal);
-    cancelBtn.addEventListener('click', closeModal);
-
-    modal.addEventListener('click', event => {
-      if (event.target === modal) {
-        closeModal();
-      }
-    });
-
-    stageInput.addEventListener('change', () => {
-      const stage = Number(stageInput.value || 0);
-      if (stage === 2 && !approvalDateInput.value) {
-        approvalDateInput.value = new Date().toISOString().slice(0, 10);
-      }
-      if (stage < 2) {
-        approvalDateInput.value = '';
-      }
-    });
-
-    docForm.addEventListener('submit', async event => {
-      event.preventDefault();
-      renderError('');
-
-      const doc = buildDocumentFromForm();
-
-      if (!doc.appendixNumber || !doc.projectName || !doc.counterparty || !doc.month) {
-        renderError('Заполни обязательные поля: месяц, номер приложения, название проекта и контрагент.');
-        return;
-      }
-
-      try {
-        await saveDocument(doc);
-        closeModal();
-      } catch (error) {
-        renderError(error.message || 'Ошибка сохранения');
-      }
-    });
-
-    fetchDocuments();
-  </script>
-</body>
-</html>
+            <textarea
+              id="commentInput
