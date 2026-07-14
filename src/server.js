@@ -19,43 +19,10 @@ const pool = new Pool({
 app.use(express.json({ limit: '1mb' }));
 app.use(express.static(publicDir));
 
-async function initDb() {
-  await pool.query(`
-    CREATE TABLE IF NOT EXISTS documents (
-      id TEXT PRIMARY KEY,
-      month TEXT NOT NULL,
-      appendix_number TEXT,
-      project_name TEXT NOT NULL,
-      counterparty TEXT NOT NULL,
-      internal_number TEXT,
-      tender_number TEXT,
-      stage INTEGER NOT NULL DEFAULT 0,
-      in_mkt BOOLEAN NOT NULL DEFAULT FALSE,
-      comment TEXT,
-      approval_deadline TIMESTAMPTZ,
-      approval_date TIMESTAMPTZ,
-      created_at TIMESTAMPTZ NOT NULL DEFAULT NOW(),
-      updated_at TIMESTAMPTZ NOT NULL DEFAULT NOW()
-    );
-  `);
-
-  await pool.query(`
-    ALTER TABLE documents
-    ADD COLUMN IF NOT EXISTS approval_deadline TIMESTAMPTZ
-  `);
-
-  await pool.query(`
-    ALTER TABLE documents
-    ADD COLUMN IF NOT EXISTS approval_date TIMESTAMPTZ
-  `);
-
-  await pool.query(`
-    CREATE TABLE IF NOT EXISTS suppliers (
-      id SERIAL PRIMARY KEY,
-      name TEXT UNIQUE NOT NULL,
-      created_at TIMESTAMPTZ NOT NULL DEFAULT NOW()
-    );
-  `);
+function addDays(dateInput, days) {
+  const date = new Date(dateInput);
+  date.setDate(date.getDate() + days);
+  return date;
 }
 
 function normalizeDoc(row) {
@@ -70,11 +37,57 @@ function normalizeDoc(row) {
     stage: Number(row.stage || 0),
     inMkt: Boolean(row.in_mkt),
     comment: row.comment || '',
-    approvalDeadline: row.approval_deadline || null,
     approvalDate: row.approval_date || null,
+    approvalDeadline: row.approval_deadline || null,
+    approvedStartedAt: row.approved_started_at || null,
     createdAt: row.created_at,
     updatedAt: row.updated_at
   };
+}
+
+async function initDb() {
+  await pool.query(`
+    CREATE TABLE IF NOT EXISTS documents (
+      id TEXT PRIMARY KEY,
+      month TEXT NOT NULL,
+      appendix_number TEXT,
+      project_name TEXT NOT NULL,
+      counterparty TEXT NOT NULL,
+      internal_number TEXT,
+      tender_number TEXT,
+      stage INTEGER NOT NULL DEFAULT 0,
+      in_mkt BOOLEAN NOT NULL DEFAULT FALSE,
+      comment TEXT,
+      approval_date TIMESTAMPTZ,
+      approval_deadline TIMESTAMPTZ,
+      approved_started_at TIMESTAMPTZ,
+      created_at TIMESTAMPTZ NOT NULL DEFAULT NOW(),
+      updated_at TIMESTAMPTZ NOT NULL DEFAULT NOW()
+    );
+  `);
+
+  await pool.query(`
+    ALTER TABLE documents
+    ADD COLUMN IF NOT EXISTS approval_date TIMESTAMPTZ
+  `);
+
+  await pool.query(`
+    ALTER TABLE documents
+    ADD COLUMN IF NOT EXISTS approval_deadline TIMESTAMPTZ
+  `);
+
+  await pool.query(`
+    ALTER TABLE documents
+    ADD COLUMN IF NOT EXISTS approved_started_at TIMESTAMPTZ
+  `);
+
+  await pool.query(`
+    CREATE TABLE IF NOT EXISTS suppliers (
+      id SERIAL PRIMARY KEY,
+      name TEXT UNIQUE NOT NULL,
+      created_at TIMESTAMPTZ NOT NULL DEFAULT NOW()
+    );
+  `);
 }
 
 app.get('/api/health', async (_req, res) => {
@@ -89,9 +102,12 @@ app.get('/api/health', async (_req, res) => {
 
 app.get('/api/documents', async (_req, res) => {
   try {
-    const result = await pool.query(
-      'SELECT * FROM documents ORDER BY month DESC, stage ASC, updated_at DESC'
-    );
+    const result = await pool.query(`
+      SELECT *
+      FROM documents
+      ORDER BY month DESC, stage ASC, updated_at DESC
+    `);
+
     res.json(result.rows.map(normalizeDoc));
   } catch (error) {
     console.error('Fetch documents error:', error);
@@ -101,7 +117,12 @@ app.get('/api/documents', async (_req, res) => {
 
 app.get('/api/suppliers', async (_req, res) => {
   try {
-    const result = await pool.query('SELECT name FROM suppliers ORDER BY name ASC');
+    const result = await pool.query(`
+      SELECT name
+      FROM suppliers
+      ORDER BY name ASC
+    `);
+
     res.json(result.rows.map((row) => row.name));
   } catch (error) {
     console.error('Fetch suppliers error:', error);
@@ -117,15 +138,43 @@ app.post('/api/documents', async (req, res) => {
       return res.status(400).json({ error: 'Missing required fields' });
     }
 
-    const stage = Number(doc.stage || 0);
+    const incomingStage = Number(doc.stage || 0);
 
-    let approvalDate = doc.approvalDate || null;
+    const existingResult = await pool.query(
+      'SELECT * FROM documents WHERE id = $1',
+      [doc.id]
+    );
+    const existing = existingResult.rows[0] || null;
 
-    if (stage === 2 && !approvalDate) {
-      approvalDate = new Date().toISOString();
+    let approvalDate = doc.approvalDate || existing?.approval_date || null;
+    let approvalDeadline = doc.approvalDeadline || existing?.approval_deadline || null;
+    let approvedStartedAt = doc.approvedStartedAt || existing?.approved_started_at || null;
+
+    const movedIntoApproved =
+      incomingStage === 2 &&
+      (!existing || Number(existing.stage) !== 2);
+
+    const movedOutOfApproved =
+      existing &&
+      Number(existing.stage) === 2 &&
+      incomingStage !== 2;
+
+    if (movedIntoApproved) {
+      const nowIso = new Date().toISOString();
+      approvedStartedAt = nowIso;
+
+      if (!approvalDeadline) {
+        approvalDeadline = addDays(nowIso, 10).toISOString();
+      }
+
+      if (!approvalDate) {
+        approvalDate = nowIso;
+      }
     }
 
-    if (stage < 2) {
+    if (incomingStage !== 2 && movedOutOfApproved) {
+      approvedStartedAt = null;
+      approvalDeadline = null;
       approvalDate = null;
     }
 
@@ -142,12 +191,13 @@ app.post('/api/documents', async (req, res) => {
         stage,
         in_mkt,
         comment,
-        approval_deadline,
         approval_date,
+        approval_deadline,
+        approved_started_at,
         updated_at
       )
       VALUES (
-        $1,$2,$3,$4,$5,$6,$7,$8,$9,$10,$11,$12,NOW()
+        $1,$2,$3,$4,$5,$6,$7,$8,$9,$10,$11,$12,$13,NOW()
       )
       ON CONFLICT (id) DO UPDATE SET
         month = EXCLUDED.month,
@@ -159,8 +209,9 @@ app.post('/api/documents', async (req, res) => {
         stage = EXCLUDED.stage,
         in_mkt = EXCLUDED.in_mkt,
         comment = EXCLUDED.comment,
-        approval_deadline = EXCLUDED.approval_deadline,
         approval_date = EXCLUDED.approval_date,
+        approval_deadline = EXCLUDED.approval_deadline,
+        approved_started_at = EXCLUDED.approved_started_at,
         updated_at = NOW()
       `,
       [
@@ -171,22 +222,31 @@ app.post('/api/documents', async (req, res) => {
         doc.counterparty,
         doc.internalNumber || '',
         doc.tenderNumber || '',
-        stage,
+        incomingStage,
         Boolean(doc.inMkt),
         doc.comment || '',
-        doc.approvalDeadline || null,
-        approvalDate
+        approvalDate,
+        approvalDeadline,
+        approvedStartedAt
       ]
     );
 
     if (doc.counterparty?.trim()) {
       await pool.query(
-        'INSERT INTO suppliers (name) VALUES ($1) ON CONFLICT (name) DO NOTHING',
+        `
+        INSERT INTO suppliers (name)
+        VALUES ($1)
+        ON CONFLICT (name) DO NOTHING
+        `,
         [doc.counterparty.trim()]
       );
     }
 
-    const saved = await pool.query('SELECT * FROM documents WHERE id = $1', [doc.id]);
+    const saved = await pool.query(
+      'SELECT * FROM documents WHERE id = $1',
+      [doc.id]
+    );
+
     res.json(normalizeDoc(saved.rows[0]));
   } catch (error) {
     console.error('Save document error:', error);
@@ -196,7 +256,10 @@ app.post('/api/documents', async (req, res) => {
 
 app.delete('/api/documents/:id', async (req, res) => {
   try {
-    await pool.query('DELETE FROM documents WHERE id = $1', [req.params.id]);
+    await pool.query(
+      'DELETE FROM documents WHERE id = $1',
+      [req.params.id]
+    );
     res.json({ ok: true });
   } catch (error) {
     console.error('Delete document error:', error);
