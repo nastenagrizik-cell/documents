@@ -576,6 +576,35 @@
       .steps { flex-wrap: wrap; }
       .step { min-width: calc(50% - 4px); }
     }
+
+
+    .sync-toast {
+      position: fixed;
+      right: 22px;
+      bottom: 22px;
+      max-width: min(420px, calc(100vw - 44px));
+      padding: 12px 16px;
+      border-radius: 14px;
+      background: #fff;
+      border: 1px solid var(--color-border);
+      box-shadow: 0 18px 42px rgba(54, 35, 44, 0.16);
+      color: var(--color-text);
+      font-size: 0.86rem;
+      font-weight: 700;
+      opacity: 0;
+      transform: translateY(12px);
+      pointer-events: none;
+      transition: opacity var(--transition), transform var(--transition);
+      z-index: 100;
+    }
+    .sync-toast.show { opacity: 1; transform: translateY(0); }
+    .sync-toast.success { border-color: rgba(51, 134, 89, 0.28); }
+    .sync-toast.error {
+      color: #a43848;
+      border-color: rgba(178, 58, 76, 0.28);
+      background: #fff8f9;
+    }
+    button:disabled { cursor: wait; opacity: 0.62; }
   </style>
 </head>
 <body>
@@ -731,6 +760,8 @@
 
   <script>
     const STORAGE_KEY = 'doc-tracker-premium-v4';
+    const API_DOCUMENTS = '/api/documents';
+    const API_SUPPLIERS = '/api/suppliers';
     const STEPS = [
       { key: 'mine', label: 'На мне' },
       { key: 'review', label: 'На согласовании' },
@@ -757,32 +788,53 @@
     const saveDateBtn = document.getElementById('saveDateBtn');
     const quickApprovalDate = document.getElementById('quickApprovalDate');
     const dateModalProject = document.getElementById('dateModalProject');
+    const submitBtn = form.querySelector('button[type="submit"]');
 
-    let documents = loadDocuments().map(doc => ({
-      ...doc,
-      approvalDate: doc.approvalDate || '',
-      inMkt: !!doc.inMkt
-    }));
-
+    let documents = [];
     let activeMonth = getCurrentMonth();
     let editId = null;
     let duplicateSourceDoc = null;
     let quickDateDocId = null;
 
     activeMonthInput.value = activeMonth;
-
-    renderDocuments();
+    docsList.innerHTML = '<div class="empty-state">Загружаем документы из базы…</div>';
     bindEvents();
+    initializeApp();
+
+    async function initializeApp() {
+      try {
+        const migratedCount = await loadAndMigrateDocuments();
+        await loadSupplierSuggestions();
+        renderDocuments();
+        if (migratedCount > 0) {
+          showToast(`Данные перенесены в базу: ${migratedCount}`, 'success');
+        }
+      } catch (error) {
+        console.error('Initial data load failed:', error);
+        documents = loadLocalBackup().map(normalizeDocument);
+        renderDocuments();
+        showToast('Нет связи с базой. Показана локальная резервная копия; изменения временно недоступны.', 'error', 7000);
+      }
+    }
 
     function getCurrentMonth() {
       const now = new Date();
       return `${now.getFullYear()}-${String(now.getMonth() + 1).padStart(2, '0')}`;
     }
 
+    function toDateInputValue(value) {
+      if (!value) return '';
+      const match = String(value).match(/^\d{4}-\d{2}-\d{2}/);
+      return match ? match[0] : '';
+    }
+
     function defaultApprovalDate() {
       const d = new Date();
       d.setDate(d.getDate() + 10);
-      return d.toISOString().slice(0, 10);
+      const year = d.getFullYear();
+      const month = String(d.getMonth() + 1).padStart(2, '0');
+      const day = String(d.getDate()).padStart(2, '0');
+      return `${year}-${month}-${day}`;
     }
 
     function escapeHtml(value = '') {
@@ -795,9 +847,10 @@
     }
 
     function formatApprovalDate(value) {
-      if (!value) return '';
-      const [y, m, d] = value.split('-');
-      return y && m && d ? `${d}.${m}.${y}` : value;
+      const normalized = toDateInputValue(value);
+      if (!normalized) return '';
+      const [y, m, d] = normalized.split('-');
+      return `${d}.${m}.${y}`;
     }
 
     function formatMonthLabel(monthValue) {
@@ -806,7 +859,55 @@
       return date.toLocaleString('ru-RU', { month: 'long', year: 'numeric' });
     }
 
-    function loadDocuments() {
+    function statusFromStage(stage) {
+      if (typeof stage === 'string' && STEPS.some(step => step.key === stage)) return stage;
+      return STEPS[Number(stage)]?.key || 'mine';
+    }
+
+    function stageFromStatus(status) {
+      const index = STEPS.findIndex(step => step.key === status);
+      return index >= 0 ? index : 0;
+    }
+
+    function normalizeDocument(doc = {}) {
+      return {
+        id: doc.id || crypto.randomUUID(),
+        month: doc.month || getCurrentMonth(),
+        applicationNumber: doc.applicationNumber ?? doc.appendixNumber ?? '',
+        projectName: doc.projectName || '',
+        counterparty: doc.counterparty || '',
+        internalNumber: doc.internalNumber || '',
+        tenderNumber: doc.tenderNumber || '',
+        status: doc.status || statusFromStage(doc.stage),
+        inMkt: Boolean(doc.inMkt),
+        comment: doc.comment || '',
+        approvalDate: toDateInputValue(doc.approvalDate),
+        approvalDeadline: doc.approvalDeadline || null,
+        approvedStartedAt: doc.approvedStartedAt || null,
+        createdAt: doc.createdAt || new Date().toISOString(),
+        updatedAt: doc.updatedAt || null
+      };
+    }
+
+    function toApiDocument(doc) {
+      return {
+        id: doc.id,
+        month: doc.month,
+        appendixNumber: doc.applicationNumber || '',
+        projectName: doc.projectName,
+        counterparty: doc.counterparty,
+        internalNumber: doc.internalNumber || '',
+        tenderNumber: doc.tenderNumber || '',
+        stage: stageFromStatus(doc.status),
+        inMkt: Boolean(doc.inMkt),
+        comment: doc.comment || '',
+        approvalDate: doc.approvalDate || null,
+        approvalDeadline: doc.approvalDeadline || null,
+        approvedStartedAt: doc.approvedStartedAt || null
+      };
+    }
+
+    function loadLocalBackup() {
       try {
         return JSON.parse(localStorage.getItem(STORAGE_KEY) || '[]');
       } catch {
@@ -814,8 +915,111 @@
       }
     }
 
-    function saveDocuments() {
+    function saveLocalBackup() {
       localStorage.setItem(STORAGE_KEY, JSON.stringify(documents));
+    }
+
+    async function requestJson(url, options = {}) {
+      const response = await fetch(url, {
+        headers: { 'Content-Type': 'application/json', ...(options.headers || {}) },
+        ...options
+      });
+
+      let payload = null;
+      const text = await response.text();
+      if (text) {
+        try { payload = JSON.parse(text); } catch { payload = { error: text }; }
+      }
+
+      if (!response.ok) {
+        throw new Error(payload?.error || `Ошибка сервера: ${response.status}`);
+      }
+      return payload;
+    }
+
+    async function fetchDocumentsFromServer() {
+      const rows = await requestJson(API_DOCUMENTS);
+      return Array.isArray(rows) ? rows.map(normalizeDocument) : [];
+    }
+
+    async function saveDocumentToServer(doc) {
+      const saved = await requestJson(API_DOCUMENTS, {
+        method: 'POST',
+        body: JSON.stringify(toApiDocument(doc))
+      });
+      return normalizeDocument(saved);
+    }
+
+    async function deleteDocumentFromServer(id) {
+      await requestJson(`${API_DOCUMENTS}/${encodeURIComponent(id)}`, { method: 'DELETE' });
+    }
+
+    function documentSignature(doc) {
+      return [doc.month, doc.applicationNumber, doc.projectName, doc.counterparty, doc.internalNumber]
+        .map(value => String(value || '').trim().toLowerCase())
+        .join('|');
+    }
+
+    async function loadAndMigrateDocuments() {
+      let remoteDocs = await fetchDocumentsFromServer();
+      const localDocs = loadLocalBackup().map(normalizeDocument);
+      const remoteIds = new Set(remoteDocs.map(doc => doc.id));
+      const remoteSignatures = new Set(remoteDocs.map(documentSignature));
+      let migratedCount = 0;
+
+      for (const localDoc of localDocs) {
+        const signature = documentSignature(localDoc);
+        if (remoteIds.has(localDoc.id) || remoteSignatures.has(signature)) continue;
+        try {
+          const saved = await saveDocumentToServer(localDoc);
+          remoteDocs.push(saved);
+          remoteIds.add(saved.id);
+          remoteSignatures.add(documentSignature(saved));
+          migratedCount += 1;
+        } catch (error) {
+          console.warn('Could not migrate one local document:', localDoc, error);
+        }
+      }
+
+      documents = await fetchDocumentsFromServer();
+      saveLocalBackup();
+      return migratedCount;
+    }
+
+    async function loadSupplierSuggestions() {
+      try {
+        const supplierNames = await requestJson(API_SUPPLIERS);
+        const fromDocuments = documents.map(doc => doc.counterparty).filter(Boolean);
+        const names = [...new Set([...(Array.isArray(supplierNames) ? supplierNames : []), ...fromDocuments])]
+          .sort((a, b) => a.localeCompare(b, 'ru'));
+        document.getElementById('counterpartySuggestions').innerHTML = names
+          .map(name => `<option value="${escapeHtml(name)}"></option>`)
+          .join('');
+      } catch (error) {
+        console.warn('Supplier suggestions unavailable:', error);
+      }
+    }
+
+    function replaceDocument(savedDoc) {
+      const exists = documents.some(item => item.id === savedDoc.id);
+      documents = exists
+        ? documents.map(item => item.id === savedDoc.id ? savedDoc : item)
+        : [savedDoc, ...documents];
+      saveLocalBackup();
+    }
+
+    function showToast(message, type = 'success', duration = 3200) {
+      let toast = document.getElementById('syncToast');
+      if (!toast) {
+        toast = document.createElement('div');
+        toast.id = 'syncToast';
+        toast.className = 'sync-toast';
+        document.body.appendChild(toast);
+      }
+      toast.textContent = message;
+      toast.className = `sync-toast ${type} show`;
+      clearTimeout(showToast.timer);
+      showToast.timer = setTimeout(() => toast.classList.remove('show'), duration);
     }
 
     function bindEvents() {
@@ -842,7 +1046,6 @@
       document.getElementById('nextMonthBtn').addEventListener('click', () => shiftMonth(1));
       statusFilter.addEventListener('change', renderDocuments);
       searchInput.addEventListener('input', renderDocuments);
-
       form.addEventListener('submit', handleSubmit);
     }
 
@@ -911,6 +1114,8 @@
       docModal.classList.remove('open');
       docModal.setAttribute('aria-hidden', 'true');
       form.reset();
+      submitBtn.disabled = false;
+      submitBtn.textContent = 'Сохранить';
     }
 
     function openProjectsModal() {
@@ -950,21 +1155,36 @@
       quickDateDocId = null;
       dateModal.classList.remove('open');
       dateModal.setAttribute('aria-hidden', 'true');
+      saveDateBtn.disabled = false;
+      saveDateBtn.textContent = 'Сохранить';
     }
 
-    function saveQuickApprovalDate() {
-      const doc = documents.find(item => item.id === quickDateDocId);
-      if (!doc) return closeDateModal();
-      doc.approvalDate = quickApprovalDate.value || defaultApprovalDate();
-      saveDocuments();
-      closeDateModal();
-      renderDocuments();
+    async function saveQuickApprovalDate() {
+      const current = documents.find(item => item.id === quickDateDocId);
+      if (!current) return closeDateModal();
+      const updated = { ...current, approvalDate: quickApprovalDate.value || defaultApprovalDate() };
+      saveDateBtn.disabled = true;
+      saveDateBtn.textContent = 'Сохраняем…';
+      try {
+        const saved = await saveDocumentToServer(updated);
+        replaceDocument(saved);
+        closeDateModal();
+        renderDocuments();
+        showToast('Дата сохранена');
+      } catch (error) {
+        console.error(error);
+        saveDateBtn.disabled = false;
+        saveDateBtn.textContent = 'Сохранить';
+        showToast('Не удалось сохранить дату в базе.', 'error');
+      }
     }
 
-    function handleSubmit(event) {
+    async function handleSubmit(event) {
       event.preventDefault();
 
-      const doc = {
+      const wasEditing = Boolean(editId);
+      const existing = editId ? documents.find(item => item.id === editId) : null;
+      const doc = normalizeDocument({
         id: editId || crypto.randomUUID(),
         month: document.getElementById('monthInput').value,
         applicationNumber: document.getElementById('appendixNumber').value.trim(),
@@ -975,27 +1195,30 @@
         approvalDate: document.getElementById('approvalDate').value || defaultApprovalDate(),
         status: document.getElementById('statusInput').value,
         comment: document.getElementById('commentInput').value.trim(),
-        inMkt: editId
-          ? (documents.find(item => item.id === editId)?.inMkt ?? false)
-          : (duplicateSourceDoc?.inMkt ?? false),
-        createdAt: editId ? (documents.find(item => item.id === editId)?.createdAt || new Date().toISOString()) : new Date().toISOString()
-      };
+        inMkt: existing ? existing.inMkt : (duplicateSourceDoc?.inMkt ?? false),
+        approvalDeadline: existing?.approvalDeadline || duplicateSourceDoc?.approvalDeadline || null,
+        approvedStartedAt: existing?.approvedStartedAt || duplicateSourceDoc?.approvedStartedAt || null,
+        createdAt: existing?.createdAt || new Date().toISOString()
+      });
 
-      if (doc.status !== 'review' && !doc.approvalDate) {
-        doc.approvalDate = defaultApprovalDate();
+      submitBtn.disabled = true;
+      submitBtn.textContent = 'Сохраняем…';
+
+      try {
+        const saved = await saveDocumentToServer(doc);
+        replaceDocument(saved);
+        activeMonth = saved.month;
+        activeMonthInput.value = activeMonth;
+        closeModal();
+        renderDocuments();
+        await loadSupplierSuggestions();
+        showToast(wasEditing ? 'Документ обновлён' : 'Документ сохранён');
+      } catch (error) {
+        console.error(error);
+        submitBtn.disabled = false;
+        submitBtn.textContent = 'Сохранить';
+        showToast('Не удалось сохранить документ в базе.', 'error');
       }
-
-      if (editId) {
-        documents = documents.map(item => item.id === editId ? doc : item);
-      } else {
-        documents.unshift(doc);
-      }
-
-      saveDocuments();
-      activeMonth = doc.month;
-      activeMonthInput.value = activeMonth;
-      closeModal();
-      renderDocuments();
     }
 
     function renderDocuments() {
@@ -1081,7 +1304,7 @@
     function bindRowActions() {
       document.querySelectorAll('[data-row-id]').forEach((row) => {
         row.querySelectorAll('[data-action]').forEach((button) => {
-          button.onclick = () => {
+          button.onclick = async () => {
             const id = row.dataset.rowId;
             const doc = documents.find(item => item.id === id);
             if (!doc) return;
@@ -1097,26 +1320,6 @@
               return;
             }
 
-            if (action === 'delete') {
-              if (!confirm('Удалить документ?')) return;
-              documents = documents.filter(item => item.id !== id);
-              saveDocuments();
-              renderDocuments();
-              return;
-            }
-
-            if (action === 'toggle-mkt') {
-              doc.inMkt = !doc.inMkt;
-              saveDocuments();
-              renderDocuments();
-              return;
-            }
-
-            if (action === 'edit-date') {
-              openDateModal(doc);
-              return;
-            }
-
             if (action === 'toggle-comment') {
               const block = button.closest('.comment-block');
               if (!block) return;
@@ -1125,16 +1328,65 @@
               return;
             }
 
+            if (action === 'edit-date') {
+              openDateModal(doc);
+              return;
+            }
+
+            if (action === 'delete') {
+              if (!confirm('Удалить документ?')) return;
+              button.disabled = true;
+              try {
+                await deleteDocumentFromServer(id);
+                documents = documents.filter(item => item.id !== id);
+                saveLocalBackup();
+                renderDocuments();
+                showToast('Документ удалён');
+              } catch (error) {
+                console.error(error);
+                button.disabled = false;
+                showToast('Не удалось удалить документ из базы.', 'error');
+              }
+              return;
+            }
+
+            if (action === 'toggle-mkt') {
+              button.disabled = true;
+              try {
+                const saved = await saveDocumentToServer({ ...doc, inMkt: !doc.inMkt });
+                replaceDocument(saved);
+                renderDocuments();
+              } catch (error) {
+                console.error(error);
+                button.disabled = false;
+                showToast('Не удалось сохранить изменение.', 'error');
+              }
+              return;
+            }
+
             if (action === 'set-status') {
-              doc.status = button.dataset.status;
-              if (doc.status === 'review' && !doc.approvalDate) doc.approvalDate = defaultApprovalDate();
-              saveDocuments();
-              renderDocuments();
+              button.disabled = true;
+              const nextStatus = button.dataset.status;
+              const updated = {
+                ...doc,
+                status: nextStatus,
+                approvalDate: nextStatus === 'review' && !doc.approvalDate ? defaultApprovalDate() : doc.approvalDate
+              };
+              try {
+                const saved = await saveDocumentToServer(updated);
+                replaceDocument(saved);
+                renderDocuments();
+              } catch (error) {
+                console.error(error);
+                button.disabled = false;
+                showToast('Не удалось сохранить новый статус.', 'error');
+              }
             }
           };
         });
       });
     }
   </script>
+
 </body>
 </html>
