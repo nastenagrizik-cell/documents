@@ -26,10 +26,43 @@
           <p class="brand-caption" id="brandCaption">Документы по месяцам</p>
         </div>
       </div>
-      <button class="add-btn" type="button" id="openCreateBtn" aria-label="Добавить">
-        <span aria-hidden="true">+</span>
-        <span id="openCreateLabel">Документ</span>
-      </button>
+      <div class="topbar-actions">
+        <div class="header-controls" data-header-controls="documents">
+          <select class="header-filter" id="documentStatusFilter" aria-label="Фильтр документов по статусу">
+            <option value="all">Все статусы</option>
+            <option value="active">Актуальные</option>
+            <option value="approved">Согласованные</option>
+          </select>
+          <div class="quick-search" data-quick-search>
+            <button class="search-toggle" type="button" data-search-toggle="documentSearch" aria-label="Поиск по документам" aria-expanded="false">
+              <svg width="17" height="17" viewBox="0 0 24 24" fill="none" aria-hidden="true">
+                <circle cx="11" cy="11" r="6.5" stroke="currentColor" stroke-width="1.8"/>
+                <path d="M16 16L20 20" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"/>
+              </svg>
+            </button>
+            <input type="search" id="documentSearch" placeholder="Поиск по документам" aria-label="Поиск по документам" />
+          </div>
+        </div>
+        <div class="header-controls" data-header-controls="tenders" hidden>
+          <select class="header-filter header-filter-short" id="tenderStatusFilter" aria-label="Фильтр тендерных решений">
+            <option value="all">Все</option>
+            <option value="ready">Готовые</option>
+          </select>
+          <div class="quick-search" data-quick-search>
+            <button class="search-toggle" type="button" data-search-toggle="tenderSearch" aria-label="Поиск по названию решения" aria-expanded="false">
+              <svg width="17" height="17" viewBox="0 0 24 24" fill="none" aria-hidden="true">
+                <circle cx="11" cy="11" r="6.5" stroke="currentColor" stroke-width="1.8"/>
+                <path d="M16 16L20 20" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"/>
+              </svg>
+            </button>
+            <input type="search" id="tenderSearch" placeholder="Поиск по названию" aria-label="Поиск тендерных решений по названию" />
+          </div>
+        </div>
+        <button class="add-btn" type="button" id="openCreateBtn" aria-label="Добавить">
+          <span aria-hidden="true">+</span>
+          <span id="openCreateLabel">Документ</span>
+        </button>
+      </div>
     </header>
 
     <nav class="tabs" aria-label="Разделы сервиса">
@@ -38,22 +71,11 @@
     </nav>
 
     <section class="view is-active" id="documentsView" data-view="documents">
-      <div class="toolbar documents-toolbar" aria-label="Фильтры документов">
+      <div class="month-toolbar" aria-label="Выбор месяца">
         <div class="month-switcher">
           <button class="month-nav" type="button" id="prevMonthBtn" aria-label="Предыдущий месяц">‹</button>
           <div class="month-current"><input type="month" id="activeMonth" aria-label="Выбранный месяц" /></div>
           <button class="month-nav" type="button" id="nextMonthBtn" aria-label="Следующий месяц">›</button>
-        </div>
-        <div class="compact-filter">
-          <select id="documentStatusFilter" aria-label="Фильтр по статусу">
-            <option value="all">Все статусы</option>
-            <option value="active">Только актуальные</option>
-            <option value="approved">Только согласованные</option>
-          </select>
-        </div>
-        <div class="compact-filter search-field">
-          <span aria-hidden="true">⌕</span>
-          <input type="search" id="documentSearch" placeholder="Поиск по документам" aria-label="Поиск по документам" />
         </div>
       </div>
       <main class="list" id="documentsList">
@@ -62,22 +84,6 @@
     </section>
 
     <section class="view" id="tendersView" data-view="tenders" hidden>
-      <div class="toolbar tender-toolbar" aria-label="Фильтры тендерных решений">
-        <div class="section-intro">
-          <strong>Тендерные решения</strong>
-          <span>Без привязки к месяцу</span>
-        </div>
-        <div class="compact-filter">
-          <select id="tenderStatusFilter" aria-label="Фильтр тендерных решений">
-            <option value="all">Все</option>
-            <option value="ready">Готовые</option>
-          </select>
-        </div>
-        <div class="compact-filter search-field">
-          <span aria-hidden="true">⌕</span>
-          <input type="search" id="tenderSearch" placeholder="Поиск по названию" aria-label="Поиск тендерных решений по названию" />
-        </div>
-      </div>
       <main class="list tender-list" id="tendersList">
         <div class="empty-state">Загружаем тендерные решения…</div>
       </main>
@@ -212,6 +218,11 @@
           </div>
           <div class="selected-suppliers" id="selectedTenderSuppliers"></div>
           <small>Можно выбрать существующего контрагента или добавить новое название.</small>
+        </div>
+
+        <div class="field">
+          <label for="tenderComment">Комментарий</label>
+          <textarea id="tenderComment" placeholder="Необязательно: что ждём, кого напомнить или что проверить"></textarea>
         </div>
 
         <div class="stage-preview-card">
