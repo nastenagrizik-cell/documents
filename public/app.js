@@ -1060,26 +1060,26 @@ function renderTenderDecisionCard(decision) {
     const deadline = isCurrent && decision.stageDeadline
       ? `
         <button
-          class="stage-deadline-inline ${overdue ? 'is-overdue' : ''}"
+          class="stage-deadline-above ${overdue ? 'is-overdue' : ''}"
           type="button"
           data-action="edit-tender-deadline"
           title="Изменить срок текущего этапа"
-        >${overdue ? 'просрочено' : 'до'} ${formatDate(decision.stageDeadline)}</button>
+        >до ${formatDate(decision.stageDeadline)}</button>
       `
-      : '';
+      : '<span class="stage-deadline-spacer" aria-hidden="true"></span>';
 
     if (stage.key === 'yulia_ivan') {
       return `
-        <div class="${classes.join(' ')}">
-          ${deadline}
-          <div class="joint-stage-content">
-            <button
-              class="tender-step-main"
-              type="button"
-              data-action="set-tender-stage"
-              data-stage="${stage.key}"
-              title="Сделать текущим этапом"
-            >Юля / Иван</button>
+        <div class="tender-step-slot joint-step-slot">
+          <div class="stage-deadline-row">${deadline}</div>
+          <div
+            class="${classes.join(' ')}"
+            data-action="set-tender-stage"
+            data-stage="${stage.key}"
+            role="button"
+            tabindex="0"
+            title="Сделать текущим этапом"
+          >
             <div class="joint-checks" aria-label="Отдельные согласования Юли и Ивана">
               <button
                 class="joint-person ${decision.yuliaApproved ? 'is-approved' : ''}"
@@ -1100,15 +1100,17 @@ function renderTenderDecisionCard(decision) {
     }
 
     return `
-      <div class="${classes.join(' ')}">
-        ${deadline}
-        <button
-          class="tender-step-main"
-          type="button"
-          data-action="set-tender-stage"
-          data-stage="${stage.key}"
-          title="Сделать текущим этапом"
-        >${stage.label}</button>
+      <div class="tender-step-slot">
+        <div class="stage-deadline-row">${deadline}</div>
+        <div class="${classes.join(' ')}">
+          <button
+            class="tender-step-main"
+            type="button"
+            data-action="set-tender-stage"
+            data-stage="${stage.key}"
+            title="Сделать текущим этапом"
+          >${stage.label}</button>
+        </div>
       </div>
     `;
   }).join('');
@@ -1133,12 +1135,6 @@ function renderTenderDecisionCard(decision) {
           </div>
           <div class="tender-secondary-line">
             <div class="supplier-list-inline">${supplierTags}</div>
-            ${decision.comment ? `
-              <div class="comment-block tender-comment-block">
-                <button class="comment-toggle" type="button" data-action="toggle-tender-comment" aria-expanded="false">Комментарий</button>
-                <div class="comment-body">${escapeHtml(decision.comment)}</div>
-              </div>
-            ` : ''}
           </div>
         </div>
         <div class="tender-amount">${escapeHtml(formatMoney(decision.amount))}</div>
@@ -1151,17 +1147,26 @@ function renderTenderDecisionCard(decision) {
       <div class="tender-progress">
         <div class="tender-steps">
           ${stepsHtml}
-          <div class="tender-step is-ready-step ${decision.isReady ? 'is-current' : ''}">
-            <button
-              class="tender-step-main"
-              type="button"
-              data-action="set-tender-stage"
-              data-stage="completed"
-              title="Отметить решение готовым"
-            >Готово</button>
+          <div class="tender-step-slot ready-step-slot">
+            <div class="stage-deadline-row"><span class="stage-deadline-spacer" aria-hidden="true"></span></div>
+            <div class="tender-step is-ready-step ${decision.isReady ? 'is-current' : ''}">
+              <button
+                class="tender-step-main"
+                type="button"
+                data-action="set-tender-stage"
+                data-stage="completed"
+                title="Отметить решение готовым"
+              >Готово</button>
+            </div>
           </div>
         </div>
       </div>
+      ${decision.comment ? `
+        <div class="comment-block tender-comment-block">
+          <button class="comment-toggle" type="button" data-action="toggle-tender-comment" aria-expanded="false">Комментарий</button>
+          <div class="comment-body">${escapeHtml(decision.comment)}</div>
+        </div>
+      ` : ''}
     </article>
   `;
 }
