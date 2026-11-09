@@ -144,6 +144,7 @@ function normalizeTenderDecision(row) {
     validTo: dateOnly(row.valid_to),
     amount,
     suppliers: normalizeStringList(row.suppliers),
+    comment: row.comment || '',
     currentStage: row.current_stage || 'mine',
     stages: stageKeys.map((key) => ({ key, label: TENDER_STAGE_RULES[key] })),
     stageStartedOn: dateOnly(row.stage_started_on),
@@ -217,6 +218,7 @@ async function initDb() {
         valid_to DATE NOT NULL,
         amount NUMERIC(15, 2) NOT NULL,
         suppliers TEXT[] NOT NULL DEFAULT ARRAY[]::TEXT[],
+        comment TEXT,
         current_stage TEXT NOT NULL DEFAULT 'mine',
         stage_started_on DATE,
         stage_deadline DATE,
@@ -225,6 +227,11 @@ async function initDb() {
         created_at TIMESTAMPTZ NOT NULL DEFAULT NOW(),
         updated_at TIMESTAMPTZ NOT NULL DEFAULT NOW()
       )
+    `);
+
+    await client.query(`
+      ALTER TABLE tender_decisions
+      ADD COLUMN IF NOT EXISTS comment TEXT
     `);
 
     await client.query(`
@@ -443,6 +450,7 @@ app.post('/api/tender-decisions', async (req, res) => {
     const validTo = dateOnly(decision.validTo);
     const amount = Number(decision.amount);
     const suppliers = normalizeStringList(decision.suppliers);
+    const comment = String(decision.comment || '').trim();
 
     if (!id || !number || !title || !validFrom || !validTo || !Number.isFinite(amount) || amount < 0) {
       return res.status(400).json({ error: 'Заполните обязательные поля тендерного решения' });
@@ -520,6 +528,7 @@ app.post('/api/tender-decisions', async (req, res) => {
         valid_to,
         amount,
         suppliers,
+        comment,
         current_stage,
         stage_started_on,
         stage_deadline,
@@ -527,7 +536,7 @@ app.post('/api/tender-decisions', async (req, res) => {
         ivan_approved,
         updated_at
       )
-      VALUES ($1,$2,$3,$4,$5,$6,$7,$8,$9,$10,$11,$12,NOW())
+      VALUES ($1,$2,$3,$4,$5,$6,$7,$8,$9,$10,$11,$12,$13,NOW())
       ON CONFLICT (id) DO UPDATE SET
         number = EXCLUDED.number,
         title = EXCLUDED.title,
@@ -535,6 +544,7 @@ app.post('/api/tender-decisions', async (req, res) => {
         valid_to = EXCLUDED.valid_to,
         amount = EXCLUDED.amount,
         suppliers = EXCLUDED.suppliers,
+        comment = EXCLUDED.comment,
         current_stage = EXCLUDED.current_stage,
         stage_started_on = EXCLUDED.stage_started_on,
         stage_deadline = EXCLUDED.stage_deadline,
@@ -550,6 +560,7 @@ app.post('/api/tender-decisions', async (req, res) => {
         validTo,
         amount,
         suppliers,
+        comment,
         currentStage,
         stageStartedOn,
         stageDeadline,
