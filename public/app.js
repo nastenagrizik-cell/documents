@@ -23,6 +23,8 @@ const TENDER_STAGE_LABELS = {
 const elements = {
   tabs: [...document.querySelectorAll('[data-tab]')],
   views: [...document.querySelectorAll('[data-view]')],
+  headerControlGroups: [...document.querySelectorAll('[data-header-controls]')],
+  searchToggles: [...document.querySelectorAll('[data-search-toggle]')],
   brandCaption: document.getElementById('brandCaption'),
   openCreateBtn: document.getElementById('openCreateBtn'),
   openCreateLabel: document.getElementById('openCreateLabel'),
@@ -61,6 +63,7 @@ const elements = {
   tenderTitle: document.getElementById('tenderTitle'),
   tenderValidFrom: document.getElementById('tenderValidFrom'),
   tenderValidTo: document.getElementById('tenderValidTo'),
+  tenderComment: document.getElementById('tenderComment'),
   tenderSupplierInput: document.getElementById('tenderSupplierInput'),
   addTenderSupplierBtn: document.getElementById('addTenderSupplierBtn'),
   selectedTenderSuppliers: document.getElementById('selectedTenderSuppliers'),
@@ -148,6 +151,10 @@ function bindEvents() {
     }
   });
 
+  elements.searchToggles.forEach((button) => {
+    button.addEventListener('click', () => toggleQuickSearch(button));
+  });
+
   elements.prevMonthBtn.addEventListener('click', () => shiftMonth(-1));
   elements.nextMonthBtn.addEventListener('click', () => shiftMonth(1));
   elements.activeMonth.addEventListener('change', () => {
@@ -194,7 +201,17 @@ function bindEvents() {
   document.addEventListener('keydown', (event) => {
     if (event.key !== 'Escape') return;
     const openModalElement = document.querySelector('.modal.open');
-    if (openModalElement) closeModal(openModalElement.id);
+    if (openModalElement) {
+      closeModal(openModalElement.id);
+      return;
+    }
+    closeEmptySearches();
+  });
+
+  document.addEventListener('click', (event) => {
+    if (!event.target.closest('[data-quick-search]')) {
+      closeEmptySearches();
+    }
   });
 }
 
@@ -210,6 +227,10 @@ function switchTab(tabName) {
     view.hidden = !isActive;
     view.classList.toggle('is-active', isActive);
   });
+  elements.headerControlGroups.forEach((group) => {
+    group.hidden = group.dataset.headerControls !== tabName;
+  });
+  closeEmptySearches();
 
   const isDocuments = tabName === 'documents';
   elements.brandCaption.textContent = isDocuments
@@ -220,6 +241,37 @@ function switchTab(tabName) {
     'aria-label',
     isDocuments ? 'Добавить документ' : 'Добавить тендерное решение'
   );
+}
+
+function toggleQuickSearch(button) {
+  const wrapper = button.closest('[data-quick-search]');
+  const input = document.getElementById(button.dataset.searchToggle);
+  if (!wrapper || !input) return;
+  const shouldOpen = !wrapper.classList.contains('is-open');
+
+  document.querySelectorAll('[data-quick-search].is-open').forEach((item) => {
+    if (item !== wrapper && !item.querySelector('input')?.value) {
+      item.classList.remove('is-open');
+      item.querySelector('[data-search-toggle]')?.setAttribute('aria-expanded', 'false');
+    }
+  });
+
+  wrapper.classList.toggle('is-open', shouldOpen);
+  button.setAttribute('aria-expanded', String(shouldOpen));
+  if (shouldOpen) {
+    setTimeout(() => input.focus(), 0);
+  } else if (input.value) {
+    input.focus();
+  }
+}
+
+function closeEmptySearches(force = false) {
+  document.querySelectorAll('[data-quick-search].is-open').forEach((wrapper) => {
+    const input = wrapper.querySelector('input');
+    if (!force && input?.value) return;
+    wrapper.classList.remove('is-open');
+    wrapper.querySelector('[data-search-toggle]')?.setAttribute('aria-expanded', 'false');
+  });
 }
 
 function openModal(modal) {
@@ -421,6 +473,7 @@ function normalizeTenderDecision(decision = {}) {
     validTo: toDateInputValue(decision.validTo),
     amount,
     suppliers: uniqueStrings(decision.suppliers),
+    comment: decision.comment || '',
     currentStage: decision.currentStage || 'mine',
     stages: getTenderStages(amount),
     stageStartedOn: toDateInputValue(decision.stageStartedOn),
@@ -870,6 +923,7 @@ function openTenderModal(id = null) {
   elements.tenderTitle.value = decision?.title || '';
   elements.tenderValidFrom.value = decision?.validFrom || '';
   elements.tenderValidTo.value = decision?.validTo || '';
+  elements.tenderComment.value = decision?.comment || '';
   state.selectedTenderSuppliers = [...(decision?.suppliers || [])];
   elements.tenderModalTitle.textContent = decision
     ? 'Редактировать тендерное решение'
@@ -941,6 +995,7 @@ async function submitTenderDecision(event) {
     validFrom: elements.tenderValidFrom.value,
     validTo: elements.tenderValidTo.value,
     suppliers: [...state.selectedTenderSuppliers],
+    comment: elements.tenderComment.value.trim(),
     currentStage: existing?.currentStage || 'mine',
     stageStartedOn: existing?.stageStartedOn || null,
     stageDeadline: existing?.stageDeadline || null,
@@ -993,36 +1048,70 @@ function renderTenderDecisionCard(decision) {
     ? stages.length
     : stages.findIndex((stage) => stage.key === decision.currentStage);
   const overdue = !decision.isReady && isPastDate(decision.stageDeadline);
-  const currentLabel = decision.isReady
-    ? 'Готово'
-    : TENDER_STAGE_LABELS[decision.currentStage] || 'Этап не выбран';
 
-  const stepsHtml = [
-    ...stages.map((stage, index) => {
-      const classes = ['tender-step'];
-      if (decision.isReady || index < currentIndex) classes.push('is-done');
-      if (!decision.isReady && index === currentIndex) classes.push('is-current');
-      if (overdue && index === currentIndex) classes.push('is-overdue');
-      return `
+  const stepsHtml = stages.map((stage, index) => {
+    const classes = ['tender-step'];
+    const isCurrent = !decision.isReady && index === currentIndex;
+    if (decision.isReady || index < currentIndex) classes.push('is-done');
+    if (isCurrent) classes.push('is-current');
+    if (overdue && isCurrent) classes.push('is-overdue');
+    if (stage.key === 'yulia_ivan') classes.push('joint-stage');
+
+    const deadline = isCurrent && decision.stageDeadline
+      ? `
         <button
-          class="${classes.join(' ')}"
+          class="stage-deadline-inline ${overdue ? 'is-overdue' : ''}"
+          type="button"
+          data-action="edit-tender-deadline"
+          title="Изменить срок текущего этапа"
+        >${overdue ? 'просрочено' : 'до'} ${formatDate(decision.stageDeadline)}</button>
+      `
+      : '';
+
+    if (stage.key === 'yulia_ivan') {
+      return `
+        <div class="${classes.join(' ')}">
+          ${deadline}
+          <div class="joint-stage-content">
+            <button
+              class="tender-step-main"
+              type="button"
+              data-action="set-tender-stage"
+              data-stage="${stage.key}"
+              title="Сделать текущим этапом"
+            >Юля / Иван</button>
+            <div class="joint-checks" aria-label="Отдельные согласования Юли и Ивана">
+              <button
+                class="joint-person ${decision.yuliaApproved ? 'is-approved' : ''}"
+                type="button"
+                data-action="toggle-yulia"
+                aria-label="${decision.yuliaApproved ? 'Снять согласование Юли' : 'Отметить согласование Юли'}"
+              ><span aria-hidden="true">${decision.yuliaApproved ? '✓' : ''}</span>Юля</button>
+              <button
+                class="joint-person ${decision.ivanApproved ? 'is-approved' : ''}"
+                type="button"
+                data-action="toggle-ivan"
+                aria-label="${decision.ivanApproved ? 'Снять согласование Ивана' : 'Отметить согласование Ивана'}"
+              ><span aria-hidden="true">${decision.ivanApproved ? '✓' : ''}</span>Иван</button>
+            </div>
+          </div>
+        </div>
+      `;
+    }
+
+    return `
+      <div class="${classes.join(' ')}">
+        ${deadline}
+        <button
+          class="tender-step-main"
           type="button"
           data-action="set-tender-stage"
           data-stage="${stage.key}"
           title="Сделать текущим этапом"
         >${stage.label}</button>
-      `;
-    }),
-    `
-      <button
-        class="tender-step is-ready-step ${decision.isReady ? 'is-current' : ''}"
-        type="button"
-        data-action="set-tender-stage"
-        data-stage="completed"
-        title="Отметить решение готовым"
-      >Готово</button>
-    `
-  ].join('');
+      </div>
+    `;
+  }).join('');
 
   const supplierTags = decision.suppliers
     .map((name) => `<span class="supplier-tag">${escapeHtml(name)}</span>`)
@@ -1034,22 +1123,25 @@ function renderTenderDecisionCard(decision) {
       data-tender-id="${escapeHtml(decision.id)}"
     >
       <div class="tender-head">
-        <div class="tender-identity">
-          <div class="tender-kicker">
-            <span class="tender-number">Решение ${escapeHtml(decision.number)}</span>
+        <div class="tender-summary">
+          <div class="tender-primary-line">
+            <span class="tender-number">№ ${escapeHtml(decision.number)}</span>
+            <h2 class="tender-title" title="${escapeHtml(decision.title)}">${escapeHtml(decision.title)}</h2>
+            <span class="tender-validity">${formatDate(decision.validFrom)} — ${formatDate(decision.validTo)}</span>
             ${decision.isReady ? '<span class="ready-badge">Готово</span>' : ''}
             ${overdue ? '<span class="overdue-badge">Срок прошёл</span>' : ''}
           </div>
-          <h2 class="tender-title">${escapeHtml(decision.title)}</h2>
-          <div class="tender-meta">
-            <span>Действует: ${formatDate(decision.validFrom)} — ${formatDate(decision.validTo)}</span>
+          <div class="tender-secondary-line">
+            <div class="supplier-list-inline">${supplierTags}</div>
+            ${decision.comment ? `
+              <div class="comment-block tender-comment-block">
+                <button class="comment-toggle" type="button" data-action="toggle-tender-comment" aria-expanded="false">Комментарий</button>
+                <div class="comment-body">${escapeHtml(decision.comment)}</div>
+              </div>
+            ` : ''}
           </div>
-          <div class="supplier-list-inline">${supplierTags}</div>
         </div>
-        <div class="tender-amount">
-          <strong>${escapeHtml(formatMoney(decision.amount))}</strong>
-          <span>лимит решения</span>
-        </div>
+        <div class="tender-amount">${escapeHtml(formatMoney(decision.amount))}</div>
         <div class="row-actions">
           <button class="mini-btn" type="button" data-action="edit-tender" aria-label="Редактировать" title="Редактировать">✎</button>
           <button class="mini-btn delete" type="button" data-action="delete-tender" aria-label="Удалить" title="Удалить">✕</button>
@@ -1057,31 +1149,17 @@ function renderTenderDecisionCard(decision) {
       </div>
 
       <div class="tender-progress">
-        <div class="tender-progress-head">
-          <span class="current-stage-caption">
-            ${decision.isReady ? 'Согласование завершено' : `Текущий этап: <strong>${escapeHtml(currentLabel)}</strong>`}
-          </span>
-          ${!decision.isReady && decision.stageDeadline ? `
+        <div class="tender-steps">
+          ${stepsHtml}
+          <div class="tender-step is-ready-step ${decision.isReady ? 'is-current' : ''}">
             <button
-              class="deadline-chip ${overdue ? 'is-overdue' : ''}"
+              class="tender-step-main"
               type="button"
-              data-action="edit-tender-deadline"
-            >${overdue ? 'Просрочено' : 'Срок'}: ${formatDate(decision.stageDeadline)}</button>
-          ` : ''}
-        </div>
-        <div class="tender-steps">${stepsHtml}</div>
-        <div class="joint-approvals">
-          <span>Юля / Иван:</span>
-          <button
-            class="approval-toggle ${decision.yuliaApproved ? 'is-approved' : ''}"
-            type="button"
-            data-action="toggle-yulia"
-          >Юля</button>
-          <button
-            class="approval-toggle ${decision.ivanApproved ? 'is-approved' : ''}"
-            type="button"
-            data-action="toggle-ivan"
-          >Иван</button>
+              data-action="set-tender-stage"
+              data-stage="completed"
+              title="Отметить решение готовым"
+            >Готово</button>
+          </div>
         </div>
       </div>
     </article>
@@ -1096,6 +1174,13 @@ async function handleTenderListClick(event) {
   if (!decision) return;
   const action = button.dataset.action;
 
+  if (action === 'toggle-tender-comment') {
+    const block = button.closest('.comment-block');
+    if (!block) return;
+    const isOpen = block.classList.toggle('open');
+    button.setAttribute('aria-expanded', String(isOpen));
+    return;
+  }
   if (action === 'edit-tender') {
     openTenderModal(decision.id);
     return;
